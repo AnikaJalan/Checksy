@@ -1,9 +1,9 @@
-import { db } from './index';
+import { db } from './index'
 
 async function main() {
-  console.log('Seeding database...');
+  console.log('Seeding database...')
   // Add seed data if needed in the future
-  console.log('Done!');
+  console.log('Done!')
 }
 
-main().catch(console.error);
+main().catch(console.error)

@@ -104,16 +104,12 @@
         "teachers_clerk_id_unique": {
           "name": "teachers_clerk_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "clerk_id"
-          ]
+          "columns": ["clerk_id"]
         },
         "teachers_email_unique": {
           "name": "teachers_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -198,12 +194,8 @@
           "name": "teacher_preferences_teacher_id_teachers_id_fk",
           "tableFrom": "teacher_preferences",
           "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -213,9 +205,7 @@
         "teacher_preferences_teacher_id_unique": {
           "name": "teacher_preferences_teacher_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "teacher_id"
-          ]
+          "columns": ["teacher_id"]
         }
       },
       "policies": {},
@@ -340,12 +330,8 @@
           "name": "api_keys_teacher_id_teachers_id_fk",
           "tableFrom": "api_keys",
           "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -455,12 +441,8 @@
           "name": "grading_templates_teacher_id_teachers_id_fk",
           "tableFrom": "grading_templates",
           "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -558,12 +540,8 @@
           "name": "custom_rules_teacher_id_teachers_id_fk",
           "tableFrom": "custom_rules",
           "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -626,12 +604,8 @@
           "name": "template_rules_template_id_grading_templates_id_fk",
           "tableFrom": "template_rules",
           "tableTo": "grading_templates",
-          "columnsFrom": [
-            "template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["template_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -639,12 +613,8 @@
           "name": "template_rules_rule_id_custom_rules_id_fk",
           "tableFrom": "template_rules",
           "tableTo": "custom_rules",
-          "columnsFrom": [
-            "rule_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["rule_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -859,12 +829,8 @@
           "name": "grading_sessions_teacher_id_teachers_id_fk",
           "tableFrom": "grading_sessions",
           "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -872,12 +838,8 @@
           "name": "grading_sessions_template_id_grading_templates_id_fk",
           "tableFrom": "grading_sessions",
           "tableTo": "grading_templates",
-          "columnsFrom": [
-            "template_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["template_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1014,12 +976,8 @@
           "name": "student_results_session_id_grading_sessions_id_fk",
           "tableFrom": "student_results",
           "tableTo": "grading_sessions",
-          "columnsFrom": [
-            "session_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["session_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1117,12 +1075,8 @@
           "name": "grading_statistics_teacher_id_teachers_id_fk",
           "tableFrom": "grading_statistics",
           "tableTo": "teachers",
-          "columnsFrom": [
-            "teacher_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["teacher_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1132,9 +1086,7 @@
         "grading_statistics_teacher_id_unique": {
           "name": "grading_statistics_teacher_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "teacher_id"
-          ]
+          "columns": ["teacher_id"]
         }
       },
       "policies": {},
