@@ -1,5 +1,6 @@
 import { inngest } from '../client'
 
+// @ts-expect-error Inngest types mismatch
 export const gradeSubmissionEvent = inngest.createFunction(
   { id: 'grade-submission' },
   { event: 'grading/submission.eval' },
