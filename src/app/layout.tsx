@@ -14,8 +14,25 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Checksy — AI Grading Assistant',
-  description: 'Automated, secure, BYOK-driven grading platform for teachers.',
+  title: {
+    default: 'Checksy — AI Grading Assistant',
+    template: '%s | Checksy'
+  },
+  description: 'Automated, secure, BYOK-driven mass-grading platform tailored precisely for teachers giving them their weekends back.',
+  keywords: ['AI Grading', 'Teacher Assistant', 'Mass Grading', 'LLM Grading Engine'],
+  authors: [{ name: 'Checksy Team' }],
+  openGraph: {
+    title: 'Checksy — Execute Weeks of Work within Seconds',
+    description: 'Checksy combines modern pedagogical philosophy with deep local AI orchestration, giving you your weekends back securely mapping local analytics.',
+    type: 'website',
+    locale: 'en_US',
+    siteName: 'Checksy Platform'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Checksy',
+    description: 'Grade smarter, not longer.'
+  }
 }
 
 export default function RootLayout({
