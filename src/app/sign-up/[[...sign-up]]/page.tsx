@@ -7,6 +7,10 @@ export default function SignUpPage() {
         <span className="text-2xl font-medium tracking-wide text-amber-500">Checksy</span>
       </div>
       <SignUp 
+         routing="path"
+         path="/sign-up"
+         fallbackRedirectUrl="/dashboard"
+         forceRedirectUrl="/dashboard"
          appearance={{ 
            variables: { colorPrimary: '#f59e0b', colorBackground: '#09090b', colorText: '#f8fafc', colorInputBackground: '#18181b', colorInputText: '#fff' },
            elements: { card: 'border border-white/10 shadow-2xl rounded-sm !bg-[#09090b]' }

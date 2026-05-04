@@ -7,10 +7,15 @@ export async function createSession(teacherId: string, name: string, config: Gra
   const [session] = await db.insert(gradingSessions)
     .values({
       teacherId,
-      name,
-      status: 'pending',
+      subject: config.subject,
+      strictness: config.strictness,
+      customInstructions: config.customInstructions || null,
+      aiDetectionEnabled: config.enableAiDetection,
+      maxScore: config.maxScore || 100,
+      llmProvider: 'auto',
+      llmModel: 'auto',
       totalFiles: 0,
-      config: config as any,
+      status: 'pending',
     })
     .returning();
   return session;

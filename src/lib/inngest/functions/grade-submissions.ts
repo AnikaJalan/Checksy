@@ -8,11 +8,15 @@ import { parseGradingResponse } from '@/lib/grading/response-parser';
 import { db } from '@/lib/db';
 import { studentResults, apiKeys } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
+import { decryptKey } from '@/lib/crypto';
 
 // @ts-expect-error Types mismatch due to Inngest SDK generic type requirements
 export const gradeSubmissionsEvent = inngest.createFunction(
-  { id: 'grade-submissions-orchestrator', concurrency: 10 },
-  { event: 'grading/session.start' },
+  { 
+    id: 'grade-submissions-orchestrator', 
+    concurrency: 10,
+    triggers: [{ event: 'grading/session.start' }]
+  },
   async ({ event, step }) => {
     const { sessionId, teacherId, config, files } = event.data;
 
@@ -25,11 +29,11 @@ export const gradeSubmissionsEvent = inngest.createFunction(
       return keyDb;
     });
 
-    if (!providerKeyRecord) {
+    if (!providerKeyRecord && !process.env.OPENROUTER_API_KEY) {
       await step.run('fail-session', async () => {
         await updateSessionStatus(sessionId, 'failed');
       });
-      return { success: false, reason: 'Missing API Key' };
+      return { success: false, reason: 'Missing API Key and no system fallback available' };
     }
 
     let successCount = 0;
@@ -39,10 +43,25 @@ export const gradeSubmissionsEvent = inngest.createFunction(
     for (const file of files) {
       await step.run(`process-file-${file.fileName}`, async () => {
         try {
-          const gateway = new ProviderGateway(
-            providerKeyRecord.provider as any,
-            providerKeyRecord.encryptedKey 
-          );
+          let gateway: ProviderGateway;
+
+          if (providerKeyRecord) {
+            const decryptedKey = decryptKey(
+              providerKeyRecord.encryptedKey,
+              providerKeyRecord.iv,
+              providerKeyRecord.authTag
+            );
+            gateway = new ProviderGateway(
+              providerKeyRecord.provider as any,
+              decryptedKey
+            );
+          } else {
+            // Fallback to the system-level OpenRouter key
+            gateway = new ProviderGateway(
+              'openrouter',
+              process.env.OPENROUTER_API_KEY!
+            );
+          }
 
           let plagiarismRes = undefined;
           if (config.enableAiDetection) {
