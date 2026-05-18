@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserButton, useUser } from '@clerk/nextjs'
-import { Lightbulb, LayoutDashboard, Upload, ShieldAlert, Search, Bell, Settings } from 'lucide-react'
+import { Lightbulb, LayoutDashboard, Upload, ShieldAlert, Search, Bell, Settings, ClipboardList } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -17,6 +17,7 @@ export default function ProtectedLayout({
 
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Sessions', href: '/sessions', icon: ClipboardList },
     { name: 'Upload', href: '/upload', icon: Upload },
     { name: 'Plagiarism', href: '/plagiarism', icon: ShieldAlert },
   ]

@@ -78,13 +78,13 @@ export const gradeSubmissionsEvent = inngest.createFunction(
           await db.insert(studentResults).values({
             sessionId,
             studentName: file.studentName,
+            fileName: file.fileName,
             score: gradingResult.score,
             feedback: gradingResult.feedback,
-            aiScore: plagiarismRes ? plagiarismRes.aiDetection.percentage : null,
+            aiContentPercentage: plagiarismRes ? plagiarismRes.aiDetection.percentage : null,
             isFlagged: plagiarismRes ? plagiarismRes.isHighRisk : false,
-            strengths: gradingResult.strengths || [],
-            areasForImprovement: gradingResult.areasForImprovement || [],
-            grammarIssues: [],
+            status: 'graded',
+            gradedAt: new Date(),
           });
           
           successCount++;
@@ -93,13 +93,13 @@ export const gradeSubmissionsEvent = inngest.createFunction(
           await db.insert(studentResults).values({
             sessionId,
             studentName: file.studentName,
+            fileName: file.fileName,
             score: null,
             feedback: 'Grading failed due to an internal execution error.',
-            aiScore: null,
+            aiContentPercentage: null,
             isFlagged: false,
-            strengths: [],
-            areasForImprovement: [],
-            grammarIssues: [],
+            status: 'failed',
+            errorMessage: error instanceof Error ? error.message : 'Unknown error',
           });
         }
       });
