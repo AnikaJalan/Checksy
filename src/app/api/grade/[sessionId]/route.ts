@@ -12,8 +12,10 @@ export async function GET(req: Request, { params }: { params: { sessionId: strin
   if (!session) return new NextResponse('Not found', { status: 404 });
 
   let results: any[] = [];
-  if (session.status === 'completed' || session.status === 'partial') {
+  try {
     results = await getResultsBySession(sessionId, teacher.id);
+  } catch {
+    results = [];
   }
 
   return NextResponse.json({ session, results });
