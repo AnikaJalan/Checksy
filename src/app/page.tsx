@@ -1,143 +1,236 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, FileCheck2, Settings2, Sparkles } from 'lucide-react';
+import { useCallback } from 'react';
+import {
+  ArrowRight,
+  BrainCircuit,
+  CheckCircle2,
+  FileArchive,
+  FileSpreadsheet,
+  ShieldCheck,
+  Sparkles,
+  Timer,
+} from 'lucide-react';
 
-const stagger = { hidden: {}, visible: { transition: { staggerChildren: 0.15 } } };
-const fadeUp = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
+const sectionStagger = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 18 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.55,
+      ease: 'easeOut',
+    },
+  },
+};
+
+const workflow = [
+  {
+    title: 'Upload ZIP submissions',
+    body: 'Drop essays, quizzes, and worksheets as one archive. Checksy maps files by student and gets them ready for grading.',
+    icon: FileArchive,
+  },
+  {
+    title: 'AI grades with your rubric',
+    body: 'Use subject-aware grading adapters, scoring logic, and consistency rules that match how your school evaluates work.',
+    icon: BrainCircuit,
+  },
+  {
+    title: 'Export results to CSV',
+    body: 'Get classroom-ready marks, feedback, and flagged items in a clean CSV format for quick sharing and reporting.',
+    icon: FileSpreadsheet,
+  },
+];
+
+const highlights = [
+  {
+    title: 'Human-style feedback',
+    body: 'Students get score context, not just numbers, so feedback actually helps them improve.',
+    icon: CheckCircle2,
+  },
+  {
+    title: 'Fast grading loops',
+    body: 'From upload to result in minutes, even for larger class batches.',
+    icon: Timer,
+  },
+  {
+    title: 'Trust and safety checks',
+    body: 'AI-content and plagiarism risk flags help teachers review with confidence before finalizing.',
+    icon: ShieldCheck,
+  },
+];
 
 export default function LandingPage() {
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+
+  const springX = useSpring(pointerX, { stiffness: 50, damping: 20, mass: 0.7 });
+  const springY = useSpring(pointerY, { stiffness: 50, damping: 20, mass: 0.7 });
+
+  const glowOneX = useTransform(springX, (v) => v * 16);
+  const glowOneY = useTransform(springY, (v) => v * 16);
+  const glowTwoX = useTransform(springX, (v) => v * -20);
+  const glowTwoY = useTransform(springY, (v) => v * -10);
+  const glowThreeX = useTransform(springX, (v) => v * 10);
+  const glowThreeY = useTransform(springY, (v) => v * -18);
+
+  const handlePointerMove = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - left) / width;
+    const y = (event.clientY - top) / height;
+
+    pointerX.set((x - 0.5) * 2);
+    pointerY.set((y - 0.5) * 2);
+  }, [pointerX, pointerY]);
+
+  const resetPointer = useCallback(() => {
+    pointerX.set(0);
+    pointerY.set(0);
+  }, [pointerX, pointerY]);
+
   return (
-    <div className="min-h-screen bg-black text-slate-50 selection:bg-amber-500/30 font-sans">
-      
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src="/hero.png" 
-            alt="Checksy Workspace" 
-            fill 
-            priority
-            className="object-cover opacity-40 brightness-75 mix-blend-luminosity grayscale-[30%]"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent md:w-2/3" />
-        </div>
+    <main
+      className="relative min-h-screen overflow-hidden bg-[#f4f7fb] text-[#0f1b39] selection:bg-blue-200/60"
+      onMouseMove={handlePointerMove}
+      onMouseLeave={resetPointer}
+    >
+      <div className="pointer-events-none absolute inset-0">
+        <motion.div
+          className="absolute -left-20 -top-16 h-96 w-96 rounded-full bg-[#b8d9ff]/55 blur-3xl"
+          style={{ x: glowOneX, y: glowOneY }}
+          animate={{ x: [0, 20, -12, 0], y: [0, 18, 8, 0] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute right-[-7rem] top-28 h-[26rem] w-[26rem] rounded-full bg-[#9ed5d9]/45 blur-3xl"
+          style={{ x: glowTwoX, y: glowTwoY }}
+          animate={{ x: [0, -28, -10, 0], y: [0, -12, 14, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-[-9rem] left-1/3 h-[25rem] w-[25rem] rounded-full bg-[#c8ccff]/40 blur-3xl"
+          style={{ x: glowThreeX, y: glowThreeY }}
+          animate={{ x: [0, 16, -20, 0], y: [0, -20, 14, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(108,155,235,0.17),transparent_38%),radial-gradient(circle_at_76%_26%,rgba(92,187,190,0.18),transparent_42%),linear-gradient(to_bottom,rgba(244,247,251,0.4),rgba(244,247,251,0.96))]" />
+      </div>
 
-        <div className="container relative z-10 mx-auto px-6 max-w-6xl">
-          <motion.div 
-            initial="hidden" 
-            animate="visible" 
-            variants={stagger}
-            className="max-w-xls space-y-8"
+      <section className="relative mx-auto flex min-h-[88vh] w-full max-w-6xl items-center px-6 pb-16 pt-24">
+        <motion.div initial="hidden" animate="show" variants={sectionStagger} className="w-full">
+          <motion.div
+            variants={fadeUp}
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#cfd9ea] bg-white/70 px-4 py-2 shadow-sm"
           >
-            <motion.div variants={fadeUp} className="flex items-center space-x-2">
-              <Sparkles className="w-6 h-6 text-amber-500" />
-              <span className="text-xl font-semibold tracking-wide text-amber-500">Checksy</span>
-            </motion.div>
-            
-            <motion.h1 variants={fadeUp} className="text-6xl md:text-7xl lg:text-8xl font-medium tracking-tight text-white leading-[1.05]">
-              Grade smarter, <br/><span className="text-slate-400">not longer.</span>
-            </motion.h1>
-            
-            <motion.p variants={fadeUp} className="text-lg md:text-xl text-slate-300 leading-relaxed font-light max-w-lg">
-              Checksy combines your teaching philosophy with powerful local AI orchestration, giving you your weekends back without sacrificing personalized feedback.
-            </motion.p>
-            
-            <motion.div variants={fadeUp} className="pt-6">
-              <Link 
-                href="/sign-in"
-                className="inline-flex group items-center justify-center px-10 py-5 bg-amber-500 text-amber-950 font-semibold rounded-sm text-lg tracking-wide transition-all hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-black"
+            <Sparkles className="h-4 w-4 text-[#5b75aa]" />
+            <span className="text-sm tracking-wide text-[#314a7d]">Checksy AI Grading</span>
+          </motion.div>
+
+          <motion.h1 variants={fadeUp} className="max-w-4xl font-serif text-5xl leading-tight text-[#101c3e] md:text-7xl">
+            Grading that feels lighter, faster, and more fun.
+          </motion.h1>
+
+          <motion.p variants={fadeUp} className="mt-7 max-w-2xl text-lg leading-relaxed text-[#445a86] md:text-xl">
+            Upload student submissions, run guided AI grading, and get polished feedback + score exports in one smooth flow.
+            Built for teachers, not spreadsheets.
+          </motion.p>
+
+          <motion.div variants={fadeUp} className="mt-10 flex flex-wrap items-center gap-4">
+            <Link
+              href="/sign-in"
+              className="inline-flex items-center gap-2 rounded-full bg-[#111827] px-7 py-3 font-semibold text-white transition hover:bg-[#1d2940]"
+            >
+              Start Grading
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/sign-in"
+              className="inline-flex items-center rounded-full border border-[#c7d2e5] bg-white/85 px-7 py-3 font-medium text-[#27385c] transition hover:bg-white"
+            >
+              Open Dashboard
+            </Link>
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="mt-12 grid max-w-3xl grid-cols-1 gap-3 text-sm text-[#2d446f] md:grid-cols-3">
+            <div className="rounded-2xl border border-[#ccd8ee] bg-white/75 px-4 py-3 shadow-sm">Rubric-aware grading engine</div>
+            <div className="rounded-2xl border border-[#ccd8ee] bg-white/75 px-4 py-3 shadow-sm">Plagiarism and AI-risk checks</div>
+            <div className="rounded-2xl border border-[#ccd8ee] bg-white/75 px-4 py-3 shadow-sm">Downloadable CSV insights</div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      <section className="relative mx-auto w-full max-w-6xl px-6 pb-24">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={sectionStagger}
+          className="grid gap-5 md:grid-cols-3"
+        >
+          {workflow.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <motion.article
+                key={item.title}
+                variants={fadeUp}
+                className="rounded-3xl border border-[#ced9ec] bg-white/80 p-6 shadow-[0_10px_28px_rgba(31,52,97,0.08)] backdrop-blur"
               >
-                <span>Get Started Automatically</span>
-                <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1.5" />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </div>
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#ecf2ff] text-[#365796]">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-[#5d78ab]">Step {index + 1}</p>
+                <h3 className="mb-3 text-xl font-semibold text-[#15264d]">{item.title}</h3>
+                <p className="leading-relaxed text-[#4c638c]">{item.body}</p>
+              </motion.article>
+            );
+          })}
+        </motion.div>
       </section>
 
-      {/* Support / How it Works */}
-      <section className="py-32 bg-black border-t border-white/5">
-        <div className="container mx-auto px-6 max-w-5xl">
-          <motion.div 
-             initial="hidden"
-             whileInView="visible"
-             viewport={{ once: true, margin: "-100px" }}
-             variants={stagger}
-             className="grid grid-cols-1 md:grid-cols-3 gap-12"
-          >
-            <motion.div variants={fadeUp} className="space-y-4">
-              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
-                <span className="text-amber-500 font-mono text-sm">01</span>
-              </div>
-              <h3 className="text-xl font-medium">Upload Zip</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">Drop a massive zip folder of generic `.docx` documents and watch them parse silently onto mapped UI limits securely safely seamlessly in milliseconds.</p>
-            </motion.div>
-            
-            <motion.div variants={fadeUp} className="space-y-4">
-              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
-                <span className="text-amber-500 font-mono text-sm">02</span>
-              </div>
-              <h3 className="text-xl font-medium">Configure Constraints</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">Define the strictness, select the subject adapter iteratively dynamically modifying internal system AI prompt templates autonomously effortlessly preventing UI constraints.</p>
-            </motion.div>
+      <section className="relative mx-auto w-full max-w-6xl px-6 pb-28">
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={sectionStagger}
+          className="rounded-3xl border border-[#cad7ec] bg-gradient-to-br from-[#f4f8ff] via-white to-[#eff6ff] p-8 shadow-[0_22px_44px_rgba(26,48,94,0.08)] md:p-12"
+        >
+          <motion.h2 variants={fadeUp} className="font-serif text-4xl text-[#13244b] md:text-5xl">
+            Made for real classroom energy
+          </motion.h2>
+          <motion.p variants={fadeUp} className="mt-4 max-w-2xl text-lg text-[#486186]">
+            Checksy gives you speed without losing nuance. Grade at scale, review edge cases faster, and spend more time teaching.
+          </motion.p>
 
-            <motion.div variants={fadeUp} className="space-y-4">
-              <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
-                <span className="text-amber-500 font-mono text-sm">03</span>
-              </div>
-              <h3 className="text-xl font-medium">Review Results</h3>
-              <p className="text-sm text-slate-400 leading-relaxed">Export beautiful standardized CSV matrices instantly mapping AI heuristics reliably seamlessly bypassing global context hallucination securely natively effortlessly.</p>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Deep Dive Details */}
-      <section className="py-32 bg-[#050505]">
-        <div className="container mx-auto px-6 max-w-4xl space-y-24">
-          <div className="flex flex-col md:flex-row gap-12 items-start">
-             <div className="md:w-1/3 pt-2">
-                 <Settings2 className="w-8 h-8 text-amber-500 mb-6" />
-                 <h3 className="text-2xl font-medium tracking-tight">Bring Your Own Key</h3>
-             </div>
-             <div className="md:w-2/3 space-y-4">
-                 <p className="text-lg text-slate-300 font-light leading-relaxed">We don't lock you into abstract subscriptions mapping generic SaaS overheads globally. Easily paste your own LLM Provider keys and Checksy encrypts them directly onto your teacher profile mapping algorithms strictly via AES-256 securely. You strictly own and orchestrate your individual isolated compute costs seamlessly natively iteratively gracefully securely globally effortlessly.</p>
-             </div>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {highlights.map((item) => {
+              const Icon = item.icon;
+              return (
+                <motion.div
+                  key={item.title}
+                  variants={fadeUp}
+                  className="rounded-2xl border border-[#cfdcf1] bg-white/85 p-5 shadow-sm"
+                >
+                  <Icon className="mb-3 h-5 w-5 text-[#4667a6]" />
+                  <h4 className="mb-2 text-lg font-semibold text-[#1b2f59]">{item.title}</h4>
+                  <p className="text-[#4e658c]">{item.body}</p>
+                </motion.div>
+              );
+            })}
           </div>
-
-          <div className="flex flex-col md:flex-row gap-12 items-start">
-             <div className="md:w-1/3 pt-2">
-                 <FileCheck2 className="w-8 h-8 text-amber-500 mb-6" />
-                 <h3 className="text-2xl font-medium tracking-tight">Zero Hallucinations</h3>
-             </div>
-             <div className="md:w-2/3 space-y-4">
-                 <p className="text-lg text-slate-300 font-light leading-relaxed">Our unified background mapping Inngest orchestrators clamp rigid mathematical heuristic constraints directly encapsulating schemas exactly preventing external metadata traces securely globally smoothly effortlessly mapping output seamlessly strictly safely flawlessly protecting grades iteratively robustly natively correctly safely bypassing model limits entirely safely completely.</p>
-             </div>
-          </div>
-        </div>
+        </motion.div>
       </section>
-
-      {/* Final CTA */}
-      <section className="py-32 bg-black border-t border-white/5 text-center">
-        <div className="container mx-auto px-6 max-w-2xl space-y-8">
-           <h2 className="text-4xl font-medium tracking-tight text-white">Start your final weekend.</h2>
-           <p className="text-slate-400 text-lg">Join securely safely mapping analytics reliably iteratively grading beautifully effortlessly seamlessly reliably.</p>
-           <div className="pt-8">
-             <Link 
-               href="/sign-in"
-               className="inline-flex items-center justify-center px-8 py-3 bg-white text-black font-semibold rounded-sm tracking-wide transition-all hover:bg-slate-200"
-             >
-               Go to Dashboard Native
-             </Link>
-           </div>
-        </div>
-      </section>
-
-    </div>
+    </main>
   );
 }
