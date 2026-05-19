@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { toast } from 'sonner'
-import { Loader2, Plus, Pencil, Trash2, X, Check, BookOpen, GraduationCap, FileText, Zap } from 'lucide-react'
+import { Loader2, Plus, Pencil, Trash2, X, Check, BookOpen, GraduationCap, FileText, Zap, ChevronDown } from 'lucide-react'
 
 interface CustomRule {
   id: string
@@ -58,6 +58,7 @@ export default function TemplatesPage() {
   const [aiDetectionEnabled, setAiDetectionEnabled] = useState(true)
   const [maxScore, setMaxScore] = useState(100)
   const [selectedRuleIds, setSelectedRuleIds] = useState<string[]>([])
+  const [rulesOpen, setRulesOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function TemplatesPage() {
       setMaxScore(100)
       setSelectedRuleIds([])
     }
+    setRulesOpen(false)
     setIsFormOpen(true)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -101,6 +103,7 @@ export default function TemplatesPage() {
   function closeForm() {
     setIsFormOpen(false)
     setEditingId(null)
+    setRulesOpen(false)
   }
 
   function toggleRule(id: string) {
@@ -125,14 +128,17 @@ export default function TemplatesPage() {
           name,
           subject,
           strictness,
-          customInstructions: customInstructions || null,
+          customInstructions: customInstructions.trim() || null,
           aiDetectionEnabled,
           maxScore,
           ruleIds: selectedRuleIds
         }),
       })
 
-      if (!res.ok) throw new Error('Failed to save template')
+      if (!res.ok) {
+        const message = await res.text()
+        throw new Error(message || 'Failed to save template')
+      }
       
       const savedTemplate = await res.json()
       
@@ -144,8 +150,9 @@ export default function TemplatesPage() {
       
       toast.success(`Template ${editingId ? 'updated' : 'created'} successfully`)
       closeForm()
-    } catch {
-      toast.error('Failed to save template')
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to save template'
+      toast.error(message)
     } finally {
       setSubmitting(false)
     }
@@ -261,7 +268,7 @@ export default function TemplatesPage() {
               </div>
             </div>
 
-            {/* Custom Rules Multi-Select */}
+            {/* Custom Rules Dropdown Multi-Select */}
             <div className="space-y-3">
               <Label className="text-xs uppercase tracking-widest text-slate-400 font-semibold flex justify-between items-end">
                 <span>Attach Custom Rules</span>
@@ -274,27 +281,45 @@ export default function TemplatesPage() {
                   No active custom rules available. Create them in the Custom Rules tab.
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {rules.map(rule => {
-                    const isSelected = selectedRuleIds.includes(rule.id)
-                    return (
-                      <button
-                        key={rule.id}
-                        type="button"
-                        onClick={() => toggleRule(rule.id)}
-                        className={`text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
-                          isSelected 
-                            ? 'border-zinc-900 bg-zinc-900 text-white shadow-sm' 
-                            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="truncate">{rule.name}</span>
-                          {isSelected && <Check className="w-4 h-4 flex-shrink-0" />}
-                        </div>
-                      </button>
-                    )
-                  })}
+                <div className="relative max-w-md">
+                  <button
+                    type="button"
+                    onClick={() => setRulesOpen(!rulesOpen)}
+                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 hover:border-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-1"
+                  >
+                    <span className="truncate">
+                      {selectedRuleIds.length === 0
+                        ? 'None'
+                        : `${selectedRuleIds.length} rule${selectedRuleIds.length > 1 ? 's' : ''} selected`}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${rulesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {rulesOpen && (
+                    <div className="absolute z-30 top-full mt-1 w-full max-h-64 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg py-2">
+                      {rules.map(rule => {
+                        const isSelected = selectedRuleIds.includes(rule.id)
+                        return (
+                          <button
+                            key={rule.id}
+                            type="button"
+                            onClick={() => toggleRule(rule.id)}
+                            className="w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-slate-50 flex items-center justify-between group"
+                          >
+                            <span className={`truncate ${isSelected ? 'font-semibold text-zinc-900' : 'text-slate-700'}`}>
+                              {rule.name}
+                            </span>
+                            <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                              isSelected
+                                ? 'bg-zinc-900 border-zinc-900 text-white'
+                                : 'border-slate-300 group-hover:border-slate-400'
+                            }`}>
+                              {isSelected && <Check className="w-3.5 h-3.5" />}
+                            </div>
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

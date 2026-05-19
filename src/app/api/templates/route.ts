@@ -9,7 +9,7 @@ const createTemplateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   subject: z.string().min(1, 'Subject is required'),
   strictness: z.string().optional(),
-  customInstructions: z.string().optional(),
+  customInstructions: z.string().nullable().optional(),
   aiDetectionEnabled: z.boolean().optional(),
   ruleIds: z.array(z.string()).optional(),
   maxScore: z.number().optional(),
