@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { UserButton, useUser } from '@clerk/nextjs'
-import { Lightbulb, LayoutDashboard, Upload, ShieldAlert, Search, Bell, Settings, ClipboardList } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import { Lightbulb, LayoutDashboard, Upload, ShieldAlert, Bell, Settings, ClipboardList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { GlobalSearch } from '@/components/global-search'
 
 export default function ProtectedLayout({
   children,
@@ -93,16 +93,10 @@ export default function ProtectedLayout({
       {/* Main Content Area */}
       <div className="flex-1 ml-64 flex flex-col min-h-screen">
         {/* Topbar */}
-        <header className="h-20 bg-[#f8fbff]/95 backdrop-blur border-b border-[#d7e2f0] flex items-center justify-between px-8 sticky top-0 z-10">
+        <header className="h-20 bg-[#f8fbff]/95 backdrop-blur border-b border-[#d7e2f0] flex items-center justify-between px-8 sticky top-0 z-50 isolate">
           <div className="flex items-center gap-4 flex-1">
             <div className="w-6 h-6 border-l-2 border-r-2 border-[#cfdbed] opacity-35 mr-2" />
-            <div className="relative w-96">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8aa0c3]" />
-              <Input 
-                placeholder="Search..." 
-                className="pl-10 bg-white/85 border border-[#d9e3f1] shadow-none rounded-full h-10 text-sm text-[#243a63] placeholder:text-[#8ca1c4] focus-visible:ring-2 focus-visible:ring-[#bad0ec]"
-              />
-            </div>
+            <GlobalSearch />
           </div>
           
           <div className="flex items-center gap-6">
