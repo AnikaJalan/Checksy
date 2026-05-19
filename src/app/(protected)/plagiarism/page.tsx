@@ -135,26 +135,26 @@ export default function PlagiarismPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       {/* Hero Banner */}
-      <div className="bg-slate-100/50 rounded-[2rem] p-10 border border-slate-200/60 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-gradient-to-r from-[#edf4ff] via-[#f7faff] to-[#eef6f6] rounded-[2rem] p-10 border border-[#d4dfef] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-4 max-w-xl">
           <Badge
             variant="secondary"
-            className="bg-slate-200 text-slate-600 text-[10px] tracking-widest font-bold uppercase px-3 py-1 hover:bg-slate-200"
+            className="bg-white/75 border border-[#cbd9ef] text-[#5472a8] text-[10px] tracking-widest font-bold uppercase px-3 py-1 hover:bg-white/85"
           >
             <ShieldAlert className="w-3 h-3 mr-1" />
             AI Integrity Analysis
           </Badge>
-          <h1 className="text-4xl font-serif font-bold text-slate-900 tracking-tight">
+          <h1 className="text-4xl font-serif font-bold text-[#14264d] tracking-tight">
             Plagiarism Checker
           </h1>
-          <p className="text-slate-500 text-sm leading-relaxed">
+          <p className="text-[#506991] text-sm leading-relaxed">
             Upload student files or paste text to analyze AI-generated writing signals. Powered by NVIDIA Nemotron via OpenRouter.
           </p>
         </div>
 
-        <div className="flex items-center gap-4 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex items-center gap-4 bg-white/90 p-2 rounded-2xl border border-[#d4dfef] shadow-sm">
           <Select value={strictness} onValueChange={setStrictness}>
-            <SelectTrigger className="w-[140px] border-none shadow-none focus:ring-0 text-slate-700 font-medium bg-transparent">
+            <SelectTrigger className="w-[140px] border-none shadow-none focus:ring-0 text-[#304a76] font-medium bg-transparent">
               <SelectValue placeholder="Strictness" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -163,7 +163,7 @@ export default function PlagiarismPage() {
               <SelectItem value="high">High</SelectItem>
             </SelectContent>
           </Select>
-          <div className="bg-zinc-900 text-white text-[11px] uppercase tracking-wider font-bold px-4 py-2 rounded-xl whitespace-nowrap">
+          <div className="bg-[#111827] text-white text-[11px] uppercase tracking-wider font-bold px-4 py-2 rounded-xl whitespace-nowrap">
             Flag at {threshold}%
           </div>
         </div>
@@ -171,47 +171,47 @@ export default function PlagiarismPage() {
 
       {/* Dropzone */}
       <div className="space-y-3">
-        <h2 className="text-lg font-serif font-bold text-slate-900">Upload files</h2>
-        <p className="text-sm text-slate-500">
-          Supports <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-700">.txt</code> and{' '}
-          <code className="bg-slate-100 px-1 py-0.5 rounded text-slate-700">.docx</code> files.
+        <h2 className="text-lg font-serif font-bold text-[#14264d]">Upload files</h2>
+        <p className="text-sm text-[#5c739b]">
+          Supports <code className="bg-[#ebf2ff] px-1 py-0.5 rounded text-[#3f5c90]">.txt</code> and{' '}
+          <code className="bg-[#ebf2ff] px-1 py-0.5 rounded text-[#3f5c90]">.docx</code> files.
         </p>
         <div
           {...getRootProps()}
           className={`border-2 border-dashed rounded-[2rem] p-16 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 ${
             isDragActive
-              ? 'border-zinc-900 bg-zinc-50 shadow-md'
-              : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+              ? 'border-[#8eb1e1] bg-[#eef5ff] shadow-md'
+              : 'border-[#d4dfef] bg-white/90 hover:border-[#bfd0e8] hover:shadow-sm'
           }`}
         >
           <input {...getInputProps()} />
           <div
             className={`w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-all ${
-              isDragActive ? 'bg-zinc-900 text-white scale-110' : 'bg-slate-100 text-slate-600'
+              isDragActive ? 'bg-[#1f3766] text-white scale-110' : 'bg-[#ecf2ff] text-[#5e78aa]'
             }`}
           >
             <UploadIcon className="w-7 h-7" />
           </div>
-          <p className="font-semibold text-slate-800 text-base">
+          <p className="font-semibold text-[#233c67] text-base">
             {isDragActive ? 'Drop files here…' : 'Drag & drop files here'}
           </p>
-          <p className="text-sm text-slate-400 mt-1">or click to browse</p>
+          <p className="text-sm text-[#7d90b2] mt-1">or click to browse</p>
         </div>
       </div>
 
       {/* Paste Text */}
       <div className="space-y-3">
-        <h2 className="text-lg font-serif font-bold text-slate-900">Or paste text directly</h2>
+        <h2 className="text-lg font-serif font-bold text-[#14264d]">Or paste text directly</h2>
         <Textarea
           value={pasteText}
           onChange={(e) => setPasteText(e.target.value)}
           placeholder="Paste a student's essay, assignment, or any text here…"
-          className="min-h-[120px] rounded-2xl border-slate-200 resize-none text-sm"
+          className="min-h-[120px] rounded-2xl border-[#d4dfef] bg-white/90 resize-none text-sm"
         />
         <Button
           onClick={addPastedText}
           variant="outline"
-          className="rounded-full border-slate-300 text-slate-700 hover:bg-slate-50"
+          className="rounded-full border-[#c7d4e9] text-[#3d598d] hover:bg-[#edf4ff]"
           disabled={pasteText.trim().length < 20}
         >
           Add to queue
@@ -222,13 +222,13 @@ export default function PlagiarismPage() {
       {files.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-serif font-bold text-slate-900">
+            <h2 className="text-lg font-serif font-bold text-[#14264d]">
               Queue ({files.length} item{files.length !== 1 ? 's' : ''})
             </h2>
             <Button
               onClick={runAnalysis}
               disabled={isRunning}
-              className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-full px-6 shadow-sm"
+              className="bg-[#111827] hover:bg-[#1d2940] text-white rounded-full px-6 shadow-sm"
             >
               {isRunning ? (
                 <>
@@ -243,15 +243,15 @@ export default function PlagiarismPage() {
 
           <div className="space-y-3">
             {files.map((file, idx) => (
-              <Card key={idx} className="border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+              <Card key={idx} className="border-[#d4dfef] bg-white/90 rounded-2xl shadow-sm overflow-hidden">
                 <CardContent className="p-5">
                   {/* File header */}
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-4 h-4 text-slate-500" />
+                      <div className="w-9 h-9 rounded-xl bg-[#ecf2ff] flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-4 h-4 text-[#5f78ab]" />
                       </div>
-                      <span className="text-sm font-medium text-slate-800 truncate">{file.name}</span>
+                      <span className="text-sm font-medium text-[#233c67] truncate">{file.name}</span>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       {file.status === 'analyzing' && (
@@ -260,7 +260,7 @@ export default function PlagiarismPage() {
                         </span>
                       )}
                       {file.status === 'pending' && (
-                        <span className="text-xs text-slate-400 font-medium">Pending</span>
+                        <span className="text-xs text-[#7d90b2] font-medium">Pending</span>
                       )}
                       {file.status === 'error' && (
                         <span className="flex items-center gap-1 text-xs text-rose-500 font-medium">
@@ -270,7 +270,7 @@ export default function PlagiarismPage() {
                       {!isRunning && (
                         <button
                           onClick={() => removeFile(idx)}
-                          className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors"
+                          className="w-7 h-7 rounded-full hover:bg-[#edf4ff] flex items-center justify-center text-[#7d90b2] hover:text-[#5472a8] transition-colors"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -280,7 +280,7 @@ export default function PlagiarismPage() {
 
                   {/* Results */}
                   {file.status === 'done' && file.result && (
-                    <div className="mt-4 pt-4 border-t border-slate-100 space-y-3">
+                    <div className="mt-4 pt-4 border-t border-[#e3ebf6] space-y-3">
                       <div className="flex items-center gap-4">
                         {/* Score ring */}
                         <div
@@ -305,12 +305,12 @@ export default function PlagiarismPage() {
                                 <CheckCircle2 className="w-3 h-3" /> Looks Authentic
                               </span>
                             )}
-                            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                            <span className="text-[10px] uppercase tracking-wider text-[#7d90b2] font-semibold">
                               {file.result.aiDetection.confidence} confidence
                             </span>
                           </div>
-                          <p className="text-xs text-slate-500">
-                            AI Content Score: <span className="font-semibold text-slate-700">{file.result.aiDetection.percentage}%</span>
+                          <p className="text-xs text-[#5c739b]">
+                            AI Content Score: <span className="font-semibold text-[#304a76]">{file.result.aiDetection.percentage}%</span>
                           </p>
                         </div>
                       </div>
@@ -318,13 +318,13 @@ export default function PlagiarismPage() {
                       {/* Flags */}
                       {file.result.aiDetection.flags.length > 0 && (
                         <div className="space-y-1.5">
-                          <p className="text-[10px] uppercase tracking-widest font-semibold text-slate-400 flex items-center gap-1">
+                          <p className="text-[10px] uppercase tracking-widest font-semibold text-[#7d90b2] flex items-center gap-1">
                             <Info className="w-3 h-3" /> Detection Signals
                           </p>
                           <ul className="space-y-1">
                             {file.result.aiDetection.flags.map((flag, fi) => (
-                              <li key={fi} className="text-xs text-slate-600 flex items-start gap-2">
-                                <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0" />
+                              <li key={fi} className="text-xs text-[#536b93] flex items-start gap-2">
+                                <span className="w-1 h-1 rounded-full bg-[#7d90b2] mt-1.5 flex-shrink-0" />
                                 {flag}
                               </li>
                             ))}

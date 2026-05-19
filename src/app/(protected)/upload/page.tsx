@@ -84,20 +84,20 @@ export default function UploadPage() {
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
       
       {/* Hero Banner */}
-      <div className="bg-gradient-to-br from-slate-100 to-blue-50/30 rounded-[2rem] p-12 border border-blue-100/50 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[30rem] h-[30rem] bg-blue-100/40 rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/3" />
+      <div className="bg-gradient-to-br from-[#edf4ff] via-[#f7faff] to-[#eef6f6] rounded-[2rem] p-12 border border-[#d4dfef] shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[30rem] h-[30rem] bg-[#c8ddff]/50 rounded-full blur-3xl opacity-60 -translate-y-1/2 translate-x-1/3" />
         
         <div className="relative z-10 max-w-2xl space-y-6">
-          <Badge variant="outline" className="bg-white/50 backdrop-blur-sm border-blue-200 text-blue-700 text-[10px] tracking-widest font-bold uppercase px-3 py-1">
+          <Badge variant="outline" className="bg-white/70 backdrop-blur-sm border-[#c9d9f0] text-[#5270a6] text-[10px] tracking-widest font-bold uppercase px-3 py-1">
             <Activity className="w-3 h-3 mr-1" />
             Teacher Portal
           </Badge>
           
-          <h1 className="text-6xl font-serif font-bold text-slate-900 tracking-tight leading-tight">
-            Grade with <span className="text-blue-600 italic">intelligence.</span>
+          <h1 className="text-6xl font-serif font-bold text-[#14264d] tracking-tight leading-tight">
+            Grade with <span className="text-[#4f72ae] italic">intelligence.</span>
           </h1>
           
-          <p className="text-slate-500 text-lg leading-relaxed max-w-xl">
+          <p className="text-[#4f678f] text-lg leading-relaxed max-w-xl">
             Upload assignments, set your criteria, and let AI handle the heavy lifting for every student in your archive.
           </p>
         </div>
@@ -112,35 +112,35 @@ export default function UploadPage() {
             <Card 
               {...getRootProps()}
               className={`border-2 border-dashed rounded-[2rem] transition-all duration-300 ease-out focus-visible:outline-none ${
-                isDragActive ? 'border-blue-400 bg-blue-50/30 shadow-md' : 'border-slate-200 bg-white shadow-sm hover:border-slate-300 cursor-pointer'
+                isDragActive ? 'border-[#8eb1e1] bg-[#eef5ff] shadow-md' : 'border-[#d4dfef] bg-white/90 shadow-sm hover:border-[#bfd0e8] cursor-pointer'
               } ${isUploading ? 'opacity-70 pointer-events-none' : ''}`}
             >
               <input {...getInputProps()} />
               <CardContent className="p-16 flex flex-col items-center justify-center text-center min-h-[400px]">
                 {isUploading ? (
                   <>
-                    <div className="w-24 h-24 rounded-3xl bg-blue-50 flex items-center justify-center mb-8">
-                      <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+                    <div className="w-24 h-24 rounded-3xl bg-[#ecf2ff] flex items-center justify-center mb-8">
+                      <Loader2 className="w-10 h-10 text-[#4f72ae] animate-spin" />
                     </div>
-                    <h3 className="text-2xl font-serif font-bold text-slate-900 mb-3">Extracting Files...</h3>
-                    <p className="text-slate-500 max-w-sm mx-auto">Parsing .docx files from your archive securely.</p>
+                    <h3 className="text-2xl font-serif font-bold text-[#14264d] mb-3">Extracting Files...</h3>
+                    <p className="text-[#5c739b] max-w-sm mx-auto">Parsing .docx files from your archive securely.</p>
                   </>
                 ) : (
                   <>
                     <div className={`w-24 h-24 rounded-3xl flex items-center justify-center mb-8 transition-all duration-300 ${
-                      isDragActive ? 'bg-white shadow-xl scale-110 text-blue-600' : 'bg-slate-50 shadow-sm text-blue-500'
+                      isDragActive ? 'bg-white shadow-xl scale-110 text-[#4f72ae]' : 'bg-[#f3f7ff] shadow-sm text-[#5f7db4]'
                     }`}>
                       <UploadIcon className="w-10 h-10" />
                     </div>
-                    <h3 className="text-2xl font-serif font-bold text-slate-900 mb-3">Drop Assignments (.zip)</h3>
-                    <p className="text-slate-500 max-w-sm mx-auto">Support .zip files up to 200MB. Your grading flow starts here.</p>
+                    <h3 className="text-2xl font-serif font-bold text-[#14264d] mb-3">Drop Assignments (.zip)</h3>
+                    <p className="text-[#5c739b] max-w-sm mx-auto">Support .zip files up to 200MB. Your grading flow starts here.</p>
                     {error && <p className="text-rose-500 mt-4 text-sm font-medium bg-rose-50 px-3 py-1 rounded-full">{error}</p>}
                   </>
                 )}
               </CardContent>
             </Card>
           ) : step === 'configure' ? (
-            <Card className="border-slate-200 rounded-[2rem] shadow-sm overflow-hidden bg-white">
+            <Card className="border-[#d4dfef] rounded-[2rem] shadow-sm overflow-hidden bg-white/90">
                <ConfigurationStep 
                  fileCount={manifest.count}
                  fileName={manifest.fileName}
@@ -150,7 +150,7 @@ export default function UploadPage() {
                />
             </Card>
           ) : (
-            <Card className="border-slate-200 rounded-[2rem] shadow-sm overflow-hidden bg-white">
+            <Card className="border-[#d4dfef] rounded-[2rem] shadow-sm overflow-hidden bg-white/90">
                <ProgressView 
                  sessionId={manifest.sessionId} 
                  onComplete={() => router.push(`/grade/${manifest.sessionId}`)} 
@@ -161,20 +161,20 @@ export default function UploadPage() {
 
         {/* Right Column: Status Center */}
         <div className="lg:col-span-1">
-          <Card className="border-slate-200 rounded-[2rem] shadow-sm h-full">
+          <Card className="border-[#d4dfef] rounded-[2rem] shadow-sm h-full bg-white/90">
             <CardContent className="p-8 flex flex-col h-full gap-6">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <ShieldCheck className="w-5 h-5 text-blue-600" />
-                  <h3 className="text-xl font-serif font-bold text-slate-900">Status Center</h3>
+                  <ShieldCheck className="w-5 h-5 text-[#4f72ae]" />
+                  <h3 className="text-xl font-serif font-bold text-[#14264d]">Status Center</h3>
                 </div>
-                <p className="text-sm text-slate-500">Monitor your grading job progress.</p>
+                <p className="text-sm text-[#5c739b]">Monitor your grading job progress.</p>
               </div>
 
               {/* Stat pills — shown when a ZIP is uploaded */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-center">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Status</p>
+                <div className="rounded-2xl border border-[#e3ebf6] bg-[#f5f9ff] p-4 text-center">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-[#6d84ac] mb-2">Status</p>
                   {step === 'upload' && (
                     <span className="inline-flex items-center gap-1.5 text-amber-600 text-sm font-semibold">
                       <Clock className="w-3.5 h-3.5" /> Waiting
@@ -191,16 +191,16 @@ export default function UploadPage() {
                     </span>
                   )}
                 </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-center">
-                  <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Files</p>
-                  <p className="text-2xl font-serif font-bold text-slate-900">
+                <div className="rounded-2xl border border-[#e3ebf6] bg-[#f5f9ff] p-4 text-center">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-[#6d84ac] mb-2">Files</p>
+                  <p className="text-2xl font-serif font-bold text-[#14264d]">
                     {manifest?.count ?? 0}
                   </p>
                 </div>
               </div>
 
               {/* Step tracker */}
-              <div className="flex-1 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col p-5 text-sm">
+              <div className="flex-1 bg-[#f5f9ff] rounded-2xl border border-[#e3ebf6] flex flex-col p-5 text-sm">
                 <div className="space-y-5">
                   <div className="flex items-start gap-3">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${step === 'upload' ? 'bg-blue-100 text-blue-600 ring-4 ring-blue-50' : 'bg-emerald-100 text-emerald-600'}`}>
