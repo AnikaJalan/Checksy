@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Upload as UploadIcon, ShieldCheck, Activity, Loader2, CheckCircle2 } from 'lucide-react'
+import { Upload as UploadIcon, ShieldCheck, Activity, Loader2, CheckCircle2, Clock } from 'lucide-react'
 import { useDropzone } from 'react-dropzone'
 import { ConfigurationStep } from '@/components/grade/configuration-step'
 import { ProgressView } from '@/components/grade/progress-view'
@@ -40,7 +40,7 @@ export default function UploadPage() {
       }
       
       const data = await res.json();
-      setManifest(data);
+      setManifest({ ...data, fileName: file.name });
       setStep('configure');
       toast.success(`Extracted ${data.count} submissions successfully.`);
     } catch (err: any) {
@@ -58,13 +58,13 @@ export default function UploadPage() {
     disabled: isUploading || step !== 'upload'
   });
 
-  const handleStartSession = async (config: GradingConfig) => {
+  const handleStartSession = async (config: GradingConfig, name: string) => {
     try {
       const res = await fetch('/api/grade', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: `Batch Evaluation - ${new Date().toLocaleDateString()}`,
+          name,
           config,
           files: manifest.manifest
         })
@@ -142,9 +142,11 @@ export default function UploadPage() {
           ) : step === 'configure' ? (
             <Card className="border-slate-200 rounded-[2rem] shadow-sm overflow-hidden bg-white">
                <ConfigurationStep 
-                 fileCount={manifest.count} 
+                 fileCount={manifest.count}
+                 fileName={manifest.fileName}
                  files={manifest.manifest} 
-                 onStartSession={handleStartSession} 
+                 onStartSession={handleStartSession}
+                 onCancel={() => { setStep('upload'); setManifest(null); }}
                />
             </Card>
           ) : (
@@ -160,44 +162,71 @@ export default function UploadPage() {
         {/* Right Column: Status Center */}
         <div className="lg:col-span-1">
           <Card className="border-slate-200 rounded-[2rem] shadow-sm h-full">
-            <CardContent className="p-8 flex flex-col h-full">
-              <div className="flex items-center gap-2 mb-2">
-                <ShieldCheck className="w-5 h-5 text-blue-600" />
-                <h3 className="text-xl font-serif font-bold text-slate-900">Status Center</h3>
+            <CardContent className="p-8 flex flex-col h-full gap-6">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <ShieldCheck className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-xl font-serif font-bold text-slate-900">Status Center</h3>
+                </div>
+                <p className="text-sm text-slate-500">Monitor your grading job progress.</p>
               </div>
-              <p className="text-sm text-slate-500 mb-8">
-                Monitor your grading job progress.
-              </p>
 
-              <div className="flex-1 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col p-6 text-sm">
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
+              {/* Stat pills — shown when a ZIP is uploaded */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-center">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Status</p>
+                  {step === 'upload' && (
+                    <span className="inline-flex items-center gap-1.5 text-amber-600 text-sm font-semibold">
+                      <Clock className="w-3.5 h-3.5" /> Waiting
+                    </span>
+                  )}
+                  {step === 'configure' && (
+                    <span className="inline-flex items-center gap-1.5 text-blue-600 text-sm font-semibold">
+                      <Activity className="w-3.5 h-3.5" /> Configuring
+                    </span>
+                  )}
+                  {step === 'process' && (
+                    <span className="inline-flex items-center gap-1.5 text-emerald-600 text-sm font-semibold">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Processing
+                    </span>
+                  )}
+                </div>
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-center">
+                  <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">Files</p>
+                  <p className="text-2xl font-serif font-bold text-slate-900">
+                    {manifest?.count ?? 0}
+                  </p>
+                </div>
+              </div>
+
+              {/* Step tracker */}
+              <div className="flex-1 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col p-5 text-sm">
+                <div className="space-y-5">
+                  <div className="flex items-start gap-3">
                     <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${step === 'upload' ? 'bg-blue-100 text-blue-600 ring-4 ring-blue-50' : 'bg-emerald-100 text-emerald-600'}`}>
-                      {step === 'upload' ? <span className="font-bold text-xs">1</span> : <CheckCircle2 className="w-4 h-4" />}
+                      {step === 'upload' ? <span className="font-bold text-xs">1</span> : <CheckCircle2 className="w-3.5 h-3.5" />}
                     </div>
                     <div>
-                      <p className={`font-semibold ${step === 'upload' ? 'text-slate-900' : 'text-slate-500'}`}>Upload Archive</p>
-                      <p className="text-slate-400 text-xs mt-1">Provide a ZIP of .docx files</p>
+                      <p className={`font-semibold text-[13px] ${step === 'upload' ? 'text-slate-900' : 'text-slate-500'}`}>Upload Archive</p>
+                      <p className="text-slate-400 text-xs mt-0.5">Provide a ZIP of .docx files</p>
                     </div>
                   </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${step === 'configure' ? 'bg-blue-100 text-blue-600 ring-4 ring-blue-50' : 'bg-slate-200 text-slate-400'}`}>
-                      <span className="font-bold text-xs">2</span>
+                  <div className="flex items-start gap-3">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${step === 'configure' ? 'bg-blue-100 text-blue-600 ring-4 ring-blue-50' : step === 'process' ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400'}`}>
+                      {step === 'process' ? <CheckCircle2 className="w-3.5 h-3.5" /> : <span className="font-bold text-xs">2</span>}
                     </div>
                     <div>
-                      <p className={`font-semibold ${step === 'configure' ? 'text-slate-900' : 'text-slate-400'}`}>Configure Rules</p>
-                      <p className="text-slate-400 text-xs mt-1">Set subject & AI detection</p>
+                      <p className={`font-semibold text-[13px] ${step === 'configure' ? 'text-slate-900' : 'text-slate-400'}`}>Configure Rules</p>
+                      <p className="text-slate-400 text-xs mt-0.5">Set subject & AI detection</p>
                     </div>
                   </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="w-6 h-6 rounded-full bg-slate-200 text-slate-400 flex items-center justify-center shrink-0">
+                  <div className="flex items-start gap-3">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 ${step === 'process' ? 'bg-blue-100 text-blue-600 ring-4 ring-blue-50' : 'bg-slate-200 text-slate-400'}`}>
                       <span className="font-bold text-xs">3</span>
                     </div>
                     <div>
-                      <p className="font-semibold text-slate-400">Process</p>
-                      <p className="text-slate-400 text-xs mt-1">Background AI analysis</p>
+                      <p className={`font-semibold text-[13px] ${step === 'process' ? 'text-slate-900' : 'text-slate-400'}`}>Process</p>
+                      <p className="text-slate-400 text-xs mt-0.5">Background AI analysis</p>
                     </div>
                   </div>
                 </div>

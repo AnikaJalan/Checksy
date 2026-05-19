@@ -134,11 +134,11 @@ export default async function SessionsPage() {
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <p className="font-serif font-medium text-slate-900 capitalize text-[15px]">
-                          {session.subject} Evaluation
+                        <p className="font-serif font-medium text-slate-900 text-[15px]">
+                          {(session as any).name || `${session.subject} Evaluation`}
                         </p>
                         <p className="text-xs text-slate-400 mt-0.5 capitalize">
-                          {session.strictness} strictness
+                          {session.subject} · {session.strictness} strictness
                         </p>
                       </div>
                     </td>

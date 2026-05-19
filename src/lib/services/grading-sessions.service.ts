@@ -7,6 +7,7 @@ export async function createSession(teacherId: string, name: string, config: Gra
   const [session] = await db.insert(gradingSessions)
     .values({
       teacherId,
+      name: name || 'Untitled Session',
       subject: config.subject,
       strictness: config.strictness,
       customInstructions: config.customInstructions || null,

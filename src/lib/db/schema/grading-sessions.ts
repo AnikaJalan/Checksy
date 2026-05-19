@@ -23,6 +23,7 @@ export const gradingSessions = pgTable(
       onDelete: 'set null',
     }),
     subject: varchar('subject', { length: 50 }).notNull(),
+    name: varchar('name', { length: 255 }).default('Untitled Session'),
     strictness: varchar('strictness', { length: 20 }).notNull(),
     customInstructions: text('custom_instructions'),
     aiDetectionEnabled: boolean('ai_detection_enabled').notNull().default(true),
