@@ -34,7 +34,7 @@ export async function updateSessionStatus(
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'partial',
   totalFiles?: number
 ) {
-  const updates: any = { status, updatedAt: new Date() };
+  const updates: any = { status };
   if (typeof totalFiles === 'number') updates.totalFiles = totalFiles;
   
   await db.update(gradingSessions)
