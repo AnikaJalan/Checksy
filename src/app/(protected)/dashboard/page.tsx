@@ -121,11 +121,11 @@ async function RecentActivity({ teacherId }: { teacherId: string }) {
                     {statusLabel === 'Pending' && <FileText className="w-5 h-5" />}
                   </div>
                   <div>
-                    <h4 className="font-serif font-medium text-slate-900 text-[15px] capitalize">
-                      {session.subject} Evaluation
+                    <h4 className="font-serif font-medium text-slate-900 text-[15px]">
+                      {(session as any).name ?? `${session.subject} Evaluation`}
                     </h4>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                      {new Date(session.createdAt).toLocaleDateString()} · {session.totalFiles}{' '}
+                    <p className="text-xs text-slate-400 mt-0.5 capitalize">
+                      {session.subject} · {new Date(session.createdAt).toLocaleDateString()} · {session.totalFiles}{' '}
                       file{session.totalFiles !== 1 ? 's' : ''}
                     </p>
                   </div>
