@@ -4,7 +4,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { generateText } from 'ai'
 
 export class ProviderGateway {
-  private model: any
+  private model: Parameters<typeof generateText>[0]['model']
 
   constructor(providerId: string, decryptedKey: string, modelName?: string) {
     switch (providerId) {
@@ -38,11 +38,17 @@ export class ProviderGateway {
     }
   }
 
-  async generate(prompt: string) {
-    const { text } = await generateText({
+  async generate(prompt: string, timeoutMs = 90000) {
+    const request = generateText({
       model: this.model,
       prompt,
     })
+
+    const timeout = new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error(`Model request timed out after ${timeoutMs}ms`)), timeoutMs)
+    })
+
+    const { text } = await Promise.race([request, timeout])
     return text
   }
 }

@@ -3,7 +3,18 @@ import { gradingSessions } from '@/lib/db/schema';
 import { eq, and } from 'drizzle-orm';
 import { GradingConfig } from '@/types/grading';
 
-export async function createSession(teacherId: string, name: string, config: GradingConfig) {
+type ManifestFile = {
+  fileName: string
+  studentName: string
+  textContent: string
+}
+
+export async function createSession(
+  teacherId: string,
+  name: string,
+  config: GradingConfig,
+  files?: ManifestFile[]
+) {
   const [session] = await db.insert(gradingSessions)
     .values({
       teacherId,
@@ -11,6 +22,7 @@ export async function createSession(teacherId: string, name: string, config: Gra
       subject: config.subject,
       strictness: config.strictness,
       customInstructions: config.customInstructions || null,
+      inputManifest: Array.isArray(files) ? JSON.stringify(files) : null,
       aiDetectionEnabled: config.enableAiDetection,
       maxScore: config.maxScore || 100,
       llmProvider: 'auto',
@@ -35,8 +47,18 @@ export async function updateSessionStatus(
   status: 'pending' | 'processing' | 'completed' | 'failed' | 'partial',
   totalFiles?: number
 ) {
-  const updates: any = { status };
+  const updates: {
+    status: 'pending' | 'processing' | 'completed' | 'failed' | 'partial'
+    totalFiles?: number
+    startedAt?: Date
+    completedAt?: Date
+  } = { status };
+
   if (typeof totalFiles === 'number') updates.totalFiles = totalFiles;
+  if (status === 'processing') updates.startedAt = new Date();
+  if (status === 'completed' || status === 'failed' || status === 'partial') {
+    updates.completedAt = new Date();
+  }
   
   await db.update(gradingSessions)
     .set(updates)

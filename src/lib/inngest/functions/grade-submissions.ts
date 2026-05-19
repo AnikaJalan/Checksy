@@ -9,16 +9,27 @@ import { db } from '@/lib/db';
 import { studentResults, apiKeys } from '@/lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { decryptKey } from '@/lib/crypto';
+import { NonRetriableError } from 'inngest';
 
 // @ts-expect-error Types mismatch due to Inngest SDK generic type requirements
 export const gradeSubmissionsEvent = inngest.createFunction(
   { 
     id: 'grade-submissions-orchestrator', 
     concurrency: 10,
+    retries: 1,
     triggers: [{ event: 'grading/session.start' }]
   },
   async ({ event, step }) => {
     const { sessionId, teacherId, config, files } = event.data;
+
+    const safeFail = async (reason: string) => {
+      try {
+        await updateSessionStatus(sessionId, 'failed');
+      } catch (e) {
+        console.error('Unable to mark failed session:', e);
+      }
+      throw new NonRetriableError(reason);
+    };
 
     await step.run('set-processing-status', async () => {
       await updateSessionStatus(sessionId, 'processing', files.length);
@@ -30,10 +41,7 @@ export const gradeSubmissionsEvent = inngest.createFunction(
     });
 
     if (!providerKeyRecord && !process.env.OPENROUTER_API_KEY) {
-      await step.run('fail-session', async () => {
-        await updateSessionStatus(sessionId, 'failed');
-      });
-      return { success: false, reason: 'Missing API Key and no system fallback available' };
+      await safeFail('Missing API key and no system fallback available');
     }
 
     let successCount = 0;
@@ -52,7 +60,7 @@ export const gradeSubmissionsEvent = inngest.createFunction(
               providerKeyRecord.authTag
             );
             gateway = new ProviderGateway(
-              providerKeyRecord.provider as any,
+              String(providerKeyRecord.provider),
               decryptedKey
             );
           } else {
@@ -65,12 +73,12 @@ export const gradeSubmissionsEvent = inngest.createFunction(
 
           let plagiarismRes = undefined;
           if (config.enableAiDetection) {
-             plagiarismRes = await analyzeSubmission(file.textContent, gateway);
+             plagiarismRes = await analyzeSubmission(file.textContent ?? '', gateway);
           }
 
           const adapter = getAdapter(config.subject);
           const specificContext = adapter.getPromptContext(config);
-          const prompt = buildGradingPrompt(config, file.textContent, specificContext);
+          const prompt = buildGradingPrompt(config, file.textContent ?? '', specificContext);
           
           const rawResponse = await gateway.generate(prompt);
           const gradingResult = parseGradingResponse(rawResponse, config.maxScore);

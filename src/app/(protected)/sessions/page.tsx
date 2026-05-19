@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { CheckCircle2, Clock, FileText, AlertTriangle, ArrowRight, Upload } from 'lucide-react'
 import { DeleteSessionButton } from '@/components/sessions/delete-session-button'
+import { RetrySessionButton } from '@/components/sessions/retry-session-button'
 
 function StatusBadge({ status }: { status: string }) {
   if (status === 'completed') {
@@ -167,6 +168,9 @@ export default async function SessionsPage() {
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-1 justify-end">
+                        {(session.status === 'pending' || session.status === 'failed' || session.status === 'partial') && (
+                          <RetrySessionButton sessionId={session.id} />
+                        )}
                         <DeleteSessionButton sessionId={session.id} />
                         <Button
                           asChild

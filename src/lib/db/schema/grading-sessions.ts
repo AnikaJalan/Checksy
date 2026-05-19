@@ -26,6 +26,7 @@ export const gradingSessions = pgTable(
     name: varchar('name', { length: 255 }).default('Untitled Session'),
     strictness: varchar('strictness', { length: 20 }).notNull(),
     customInstructions: text('custom_instructions'),
+    inputManifest: text('input_manifest'),
     aiDetectionEnabled: boolean('ai_detection_enabled').notNull().default(true),
     maxScore: integer('max_score').notNull().default(100),
     llmProvider: varchar('llm_provider', { length: 20 }).notNull(),
