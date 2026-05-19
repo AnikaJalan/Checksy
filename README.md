@@ -1,111 +1,117 @@
 # Checksy
 
-Checksy is a smart and efficient platform designed to simplify verification, checking, and analysis workflows through an intuitive and user-friendly interface. The project focuses on delivering accuracy, speed, and seamless user experience while solving real-world validation and monitoring challenges.
+Checksy is a smart, AI-powered platform designed to simplify and automate the assignment grading workflow for teachers. Built with a modern tech stack, Checksy processes batches of student submissions, applies customizable grading rubrics, checks for AI-generated content, and delivers actionable, consistent feedback in minutes.
 
 ## Overview
 
-Checksy helps users automate checking processes, reduce manual effort, and improve reliability through a structured and scalable system. Whether it is validation, tracking, monitoring, or analysis, Checksy provides an organized workflow with modern technologies and clean architecture.
+Checksy solves the time-consuming challenge of manual grading. Teachers can upload a ZIP archive of student submissions, select a subject, set grading strictness, apply custom instructions, and let AI do the heavy lifting. The platform uses advanced background processing to grade files concurrently and securely, providing a comprehensive dashboard to review scores, read feedback, and download CSV reports.
 
-## Features
+## Key Features
 
-* User-friendly and responsive interface
-* Fast and reliable checking system
-* Real-time processing and updates
-* Secure and scalable architecture
-* Easy integration and deployment
-* Optimized backend performance
-* Clean and maintainable code structure
-* Cross-platform accessibility
+* **Batch Processing**: Upload a ZIP file and Checksy will automatically extract and process all student submissions simultaneously.
+* **Custom Grading Templates**: Save subject-specific profiles with predefined strictness levels, max scores, and custom grading rules.
+* **Granular Custom Rules**: Create specific instructions (e.g., "Deduct 5 points for missing citations") and toggle them on a per-assignment basis.
+* **Multi-Provider AI Support**: Seamlessly integrate with OpenAI, Anthropic, Google Gemini, or Cerebras to power the grading logic.
+* **Bank-Grade Security**: Bring Your Own Key (BYOK) architecture securely encrypts your AI provider API keys using AES-256-GCM before storing them in the database.
+* **AI Content Detection**: Optional toggle to scan student submissions for AI-generated content.
+* **Real-time Background Processing**: Powered by Inngest, grading jobs run reliably in the background without tying up your browser.
+* **Teacher Dashboard**: Review grading results, grade distributions, top performers, and export final scores to CSV.
 
 ## Tech Stack
 
-### Frontend
+### Frontend & Core Framework
+* **Next.js** (App Router)
+* **React.js**
+* **TypeScript**
+* **Tailwind CSS**
+* **shadcn/ui** & **Lucide Icons**
 
-* React.js
-* HTML5
-* CSS3
-* JavaScript
-
-### Backend
-
-* Node.js / Express.js
+### Backend & Infrastructure
+* **Node.js**
+* **Inngest** (Background orchestration and job queues)
+* **Vercel AI SDK**
+* **Clerk** (Authentication & User Management)
 
 ### Database
-
-* MongoDB
-
-### Additional Tools
-
-* Git & GitHub
-* REST APIs
-* Authentication & Authorization
+* **PostgreSQL** (Dockerized local instance / Neon)
+* **Drizzle ORM** (Type-safe schema and queries)
 
 ## Project Structure
 
 ```bash
 Checksy/
 │
-├── frontend/          # Frontend source code
-├── backend/           # Backend source code
-├── public/            # Static assets
-├── src/               # React components and pages
-├── routes/            # API routes
-├── models/            # Database models
-├── controllers/       # Business logic
-├── config/            # Configuration files
+├── src/
+│   ├── app/               # Next.js App Router pages and API routes
+│   ├── components/        # Reusable UI and layout components
+│   ├── lib/               # Core logic, DB connection, AI adapters, crypto
+│   │   ├── db/            # Drizzle schema and migrations
+│   │   ├── grading/       # AI prompt builders and subject adapters
+│   │   └── inngest/       # Background worker definitions
+│   └── types/             # TypeScript interfaces
+├── .env.example           # Environment variables template
+├── drizzle.config.ts      # Drizzle ORM configuration
 ├── package.json
 └── README.md
 ```
 
-## Installation
+## Installation & Setup
 
-### Clone the Repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/AnikaJalan/Checksy.git
 cd Checksy
 ```
 
-### Install Dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Start the Development Server
+### 3. Environment Variables
+
+Create a `.env` file in the root directory. You can use `.env.example` as a template. You will need:
+* A PostgreSQL database URL.
+* Clerk authentication keys.
+* A 32-byte secure string for `ENCRYPTION_SECRET`.
+
+### 4. Start the Database
+
+If you are using Docker for your local PostgreSQL database, you can spin it up with:
 
 ```bash
-npm start
+npm run db:up
 ```
 
-## Environment Variables
+Then, push the Drizzle schema to the database:
 
-Create a `.env` file in the root directory and add the following:
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
+```bash
+npx drizzle-kit push
 ```
 
-## Usage
+### 5. Start the Development Servers
 
-1. Clone the repository
-2. Install dependencies
-3. Configure environment variables
-4. Run the development server
-5. Open the application in your browser
+You will need two terminal windows running simultaneously.
 
+**Terminal 1:** Start the Next.js frontend and API server
+```bash
+npm run dev
+```
 
-## Future Improvements
+**Terminal 2:** Start the Inngest background worker for grading jobs
+```bash
+npx inngest-cli@latest dev
+```
 
-* AI-powered validation features
-* Advanced analytics dashboard
-* Notification and alert system
-* Enhanced authentication methods
-* Deployment optimization
-* Mobile responsiveness improvements
+### 6. Usage
 
+1. Open `http://localhost:3000` in your browser and sign in via Clerk.
+2. Navigate to **Settings > API Keys** to securely add your preferred AI provider key (e.g., OpenAI, Google).
+3. (Optional) Go to **Settings > Templates** and **Custom Rules** to set up your grading rubrics.
+4. Go to **Upload**, drag and drop a ZIP file of text/markdown submissions, and configure your assignment.
+5. Click **Start Grading** and review the results in the Dashboard!
 
 ## Author
 
