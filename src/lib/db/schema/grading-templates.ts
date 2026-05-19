@@ -24,6 +24,7 @@ export const gradingTemplates = pgTable(
       .default('moderate'),
     customInstructions: text('custom_instructions'),
     aiDetectionEnabled: boolean('ai_detection_enabled').notNull().default(true),
+    ruleIds: uuid('rule_ids').array().notNull().default([]),
     maxScore: integer('max_score').notNull().default(100),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     updatedAt: timestamp('updated_at').notNull().defaultNow(),
