@@ -28,7 +28,7 @@ export default function ProtectedLayout({
       <aside className="w-64 bg-[#f8fbff]/95 backdrop-blur border-r border-[#d7e2f0] flex flex-col fixed inset-y-0 left-0 z-10">
         {/* Logo Area */}
         <div className="h-20 flex items-center px-6 border-b border-[#e3ebf6]">
-          <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="flex items-center gap-3 rounded-xl px-1 py-1 hover:bg-white/70 transition-colors">
             <div className="w-10 h-10 bg-[#111827] rounded-xl flex items-center justify-center shadow-sm">
               <Lightbulb className="w-5 h-5 text-slate-100" />
             </div>
@@ -36,7 +36,7 @@ export default function ProtectedLayout({
               <span className="font-serif font-semibold text-lg leading-tight tracking-tight text-[#14264d]">Checksy</span>
               <span className="text-[9px] uppercase tracking-widest font-semibold text-[#6e81aa]">AI Grading</span>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Navigation */}
