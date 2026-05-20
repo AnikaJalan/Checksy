@@ -9,20 +9,17 @@ import {
   CardDescription,
   CardContent,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
-import { Key, Trash2, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
+import { Key, Trash2, CheckCircle2, Loader2, Eye, EyeOff, Copy } from 'lucide-react'
 
 interface MaskedKey {
   provider: string
@@ -31,11 +28,11 @@ interface MaskedKey {
 }
 
 const PROVIDERS = [
-  { id: 'openai', name: 'OpenAI', description: 'Powering GPT-4o and GPT-4o-mini.' },
-  { id: 'anthropic', name: 'Anthropic', description: 'Nuanced feedback via Claude 3.5 Sonnet.' },
-  { id: 'google', name: 'Google Gemini', description: 'Fast processing via Gemini 2.0 Flash.' },
-  { id: 'nvidia', name: 'NVIDIA NIM', description: 'Free inference via Llama 3.1 70B Instruct.' },
-  { id: 'wolfram', name: 'Wolfram Alpha', description: 'Verification for Math assignments.' },
+  { id: 'openai', name: 'OpenAI', description: 'Powering GPT-4o and GPT-4o-mini.', placeholder: 'sk-...' },
+  { id: 'anthropic', name: 'Anthropic', description: 'Nuanced feedback via Claude 3.5 Sonnet.', placeholder: 'sk-ant-...' },
+  { id: 'google', name: 'Google Gemini', description: 'Fast processing via Gemini 2.0 Flash (free tier).', placeholder: 'AIza...' },
+  { id: 'nvidia', name: 'NVIDIA NIM', description: 'Free inference via Llama 3.1 70B Instruct.', placeholder: 'nvapi-...' },
+  { id: 'wolfram', name: 'Wolfram Alpha', description: 'Verification for Math assignments.', placeholder: 'XXXXXX-XXXXXXXXXX' },
 ]
 
 export default function ApiKeysPage() {
@@ -44,6 +41,7 @@ export default function ApiKeysPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [activeProvider, setActiveProvider] = useState<string | null>(null)
   const [newKey, setNewKey] = useState('')
+  const [showKey, setShowKey] = useState(false)
 
   useEffect(() => {
     fetchKeys()
@@ -56,32 +54,44 @@ export default function ApiKeysPage() {
         const data = await res.json()
         setKeys(data)
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to load API keys')
     } finally {
       setIsLoading(false)
     }
   }
 
+  const openDialog = (providerId: string) => {
+    setNewKey('')
+    setShowKey(false)
+    setActiveProvider(providerId)
+  }
+
+  const closeDialog = () => {
+    setActiveProvider(null)
+    setNewKey('')
+    setShowKey(false)
+  }
+
   const handleSave = async () => {
-    if (!activeProvider || !newKey) return
+    if (!activeProvider || !newKey.trim()) return
     setIsSaving(true)
     try {
       const res = await fetch('/api/keys', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ provider: activeProvider, key: newKey }),
+        body: JSON.stringify({ provider: activeProvider, key: newKey.trim() }),
       })
 
       if (res.ok) {
         toast.success(`${activeProvider} key saved successfully`)
-        setNewKey('')
-        setActiveProvider(null)
+        closeDialog()
         fetchKeys()
       } else {
-        toast.error('Failed to save key')
+        const err = await res.json().catch(() => ({}))
+        toast.error(err?.error ?? 'Failed to save key')
       }
-    } catch (error) {
+    } catch {
       toast.error('An error occurred while saving')
     } finally {
       setIsSaving(false)
@@ -96,10 +106,12 @@ export default function ApiKeysPage() {
         toast.success(`${provider} key removed`)
         fetchKeys()
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete key')
     }
   }
+
+  const activeProviderInfo = PROVIDERS.find(p => p.id === activeProvider)
 
   if (isLoading) {
     return (
@@ -142,52 +154,28 @@ export default function ApiKeysPage() {
                   <CardDescription>{provider.description}</CardDescription>
                 </div>
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" onClick={() => setActiveProvider(provider.id)}>
+                  <button
+                    onClick={() => openDialog(provider.id)}
+                    className="inline-flex items-center justify-center h-8 px-3 rounded-lg text-sm font-medium border border-slate-700 bg-transparent hover:bg-slate-800 text-slate-300 transition-colors"
+                  >
                     {config ? 'Update' : 'Configure'}
-                  </Button>
-                  <Dialog open={activeProvider === provider.id} onOpenChange={(open) => !open && setActiveProvider(null)}>
-                    <DialogContent className="bg-zinc-950 border-zinc-800">
-                      <DialogHeader>
-                        <DialogTitle>Configure {provider.name}</DialogTitle>
-                        <DialogDescription>
-                          Paste your {provider.name} API key below. We encrypt this key at rest and only use it in server-side memory during grading.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="py-4">
-                        <Input
-                          type="password"
-                          placeholder="sk-..."
-                          value={newKey}
-                          onChange={(e) => setNewKey(e.target.value)}
-                          className="bg-zinc-900 border-zinc-800"
-                        />
-                      </div>
-                      <DialogFooter>
-                        <Button variant="ghost" onClick={() => setActiveProvider(null)}>Cancel</Button>
-                        <Button 
-                          onClick={handleSave} 
-                          disabled={!newKey || isSaving}
-                          className="bg-amber-500 hover:bg-amber-600 text-black font-semibold"
-                        >
-                          {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                          Save Key
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                  </button>
                   {config && (
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => handleDelete(provider.id)}>
+                    <button
+                      onClick={() => handleDelete(provider.id)}
+                      className="inline-flex items-center justify-center h-8 w-8 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-500/10 transition-colors"
+                    >
                       <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </button>
                   )}
                 </div>
               </CardHeader>
               <CardContent>
                 {config ? (
-                   <div className="flex items-center text-xs text-muted-foreground font-mono">
-                     <Key className="w-3 h-3 mr-2" />
-                     <span>•••• •••• •••• {config.keyHint}</span>
-                   </div>
+                  <div className="flex items-center text-xs text-muted-foreground font-mono">
+                    <Key className="w-3 h-3 mr-2" />
+                    <span>•••• •••• •••• {config.keyHint}</span>
+                  </div>
                 ) : (
                   <p className="text-muted-foreground text-xs italic">Setup required to use this provider in grading sessions.</p>
                 )}
@@ -196,6 +184,85 @@ export default function ApiKeysPage() {
           )
         })}
       </div>
+
+      {/* Unified dialog controlled by state */}
+      <Dialog open={!!activeProvider} onOpenChange={(open) => !open && closeDialog()}>
+        <DialogContent className="bg-zinc-950 border-zinc-800 sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Configure {activeProviderInfo?.name}</DialogTitle>
+            <DialogDescription>
+              Paste your {activeProviderInfo?.name} API key below. It will be encrypted at rest and only used server-side during grading.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4 space-y-3">
+            <div className="relative">
+              <input
+                autoFocus
+                type={showKey ? 'text' : 'password'}
+                placeholder={activeProviderInfo?.placeholder ?? 'Paste your key here…'}
+                value={newKey}
+                onChange={(e) => setNewKey(e.target.value)}
+                onPaste={(e) => {
+                  // Explicitly handle paste to guarantee it works
+                  const pasted = e.clipboardData.getData('text')
+                  setNewKey(pasted)
+                  e.preventDefault()
+                }}
+                className="w-full h-12 pl-4 pr-20 rounded-xl border border-zinc-700 bg-zinc-900 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500/50 font-mono"
+              />
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setShowKey(!showKey)}
+                  className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors"
+                  title={showKey ? 'Hide key' : 'Show key'}
+                >
+                  {showKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const text = await navigator.clipboard.readText()
+                      setNewKey(text)
+                      toast.success('Key pasted from clipboard')
+                    } catch {
+                      toast.error('Could not read clipboard. Please paste manually with ⌘V.')
+                    }
+                  }}
+                  className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 transition-colors"
+                  title="Paste from clipboard"
+                >
+                  <Copy className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+            <p className="text-xs text-zinc-600">
+              Click inside the box and press{' '}
+              <kbd className="px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-mono text-[10px]">⌘V</kbd>
+              {' '}or click the <Copy className="inline w-3 h-3 mx-0.5" /> button to paste.
+            </p>
+          </div>
+
+          <DialogFooter>
+            <button
+              onClick={closeDialog}
+              className="inline-flex items-center justify-center h-9 px-4 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={!newKey.trim() || isSaving}
+              className="inline-flex items-center justify-center h-9 px-5 rounded-lg text-sm font-semibold bg-amber-500 hover:bg-amber-400 text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Save Key
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

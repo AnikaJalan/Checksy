@@ -6,8 +6,8 @@ import { getAdapter } from '@/lib/grading/adapters';
 import { buildGradingPrompt } from '@/lib/grading/prompt-builder';
 import { parseGradingResponse } from '@/lib/grading/response-parser';
 import { db } from '@/lib/db';
-import { studentResults, apiKeys } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { studentResults, apiKeys, gradingSessions } from '@/lib/db/schema';
+import { eq, count, avg, sql } from 'drizzle-orm';
 import { decryptKey } from '@/lib/crypto';
 import { NonRetriableError } from 'inngest';
 
@@ -48,7 +48,8 @@ export const gradeSubmissionsEvent = inngest.createFunction(
     
     // We process sequentially step by step to ensure distributed resilience 
     // where any single file crash won't tear down the entire batch job orchestrator.
-    for (const file of files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
       await step.run(`process-file-${file.fileName}`, async () => {
         try {
           let gateway: ProviderGateway;
@@ -111,13 +112,45 @@ export const gradeSubmissionsEvent = inngest.createFunction(
           });
         }
       });
+
+      // Pace requests to stay within provider RPM limits.
+      // For Google free tier (5 RPM) this is ~15s between each file.
+      if (i < files.length - 1) {
+        const provider = providerKeyRecord ? String(providerKeyRecord.provider) : 'openrouter';
+        const rpmMap: Record<string, number> = { google: 5, openai: 60, anthropic: 50, nvidia: 30, openrouter: 20 };
+        const rpm = rpmMap[provider] ?? 20;
+        const delaySec = Math.ceil((60 / rpm) * 1.2); // seconds, with 20% buffer
+        await step.sleep(`rate-limit-delay-${i}`, `${delaySec}s`);
+      }
     }
 
     await step.run('finalize-session', async () => {
-      const finalStatus = successCount === files.length ? 'completed' : 'partial';
-      await updateSessionStatus(sessionId, finalStatus);
+      // Count graded results directly from DB — don't rely on successCount closure
+      // because Inngest replays steps and the closure value resets between replays.
+      const [gradedRow] = await db
+        .select({ count: count() })
+        .from(studentResults)
+        .where(sql`${studentResults.sessionId} = ${sessionId} AND ${studentResults.status} = 'graded'`);
+
+      const [avgRow] = await db
+        .select({ avg: avg(studentResults.score) })
+        .from(studentResults)
+        .where(eq(studentResults.sessionId, sessionId));
+
+      const gradedCount = gradedRow?.count ?? 0;
+      const averageScore = avgRow?.avg ? Math.round(Number(avgRow.avg)) : null;
+      const finalStatus = gradedCount >= files.length ? 'completed' : gradedCount > 0 ? 'partial' : 'failed';
+
+      // Update status and averageScore in one go
+      await db.update(gradingSessions)
+        .set({ 
+          status: finalStatus, 
+          averageScore: averageScore,
+          completedAt: new Date() 
+        })
+        .where(eq(gradingSessions.id, sessionId));
     });
 
-    return { success: true, processed: successCount, total: files.length };
+    return { success: true, total: files.length };
   }
 );

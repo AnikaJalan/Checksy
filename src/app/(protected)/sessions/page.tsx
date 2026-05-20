@@ -26,6 +26,13 @@ function StatusBadge({ status }: { status: string }) {
       </span>
     )
   }
+  if (status === 'partial') {
+    return (
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-amber-100/60 text-amber-700">
+        <AlertTriangle className="w-3 h-3" /> Partial
+      </span>
+    )
+  }
   if (status === 'failed') {
     return (
       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-rose-100/60 text-rose-700">
@@ -34,7 +41,7 @@ function StatusBadge({ status }: { status: string }) {
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-amber-100/60 text-amber-700">
+    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-slate-100/60 text-slate-600">
       <Clock className="w-3 h-3" /> Pending
     </span>
   )

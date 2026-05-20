@@ -3,7 +3,6 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { Trash2, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,21 +31,20 @@ export function DeleteSessionButton({ sessionId }: { sessionId: string }) {
       toast.success('Session deleted successfully')
       setOpen(false)
       startTransition(() => router.refresh())
-    } catch (err: any) {
-      toast.error(err.message)
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete session')
     }
   }
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+        <button
+          type="button"
+          className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
         >
           <Trash2 className="w-4 h-4" />
-        </Button>
+        </button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
