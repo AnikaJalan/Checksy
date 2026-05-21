@@ -99,27 +99,33 @@ export function ConfigurationStep({
   const label = strictnessLabel(strictnessVal);
   const selectedSubject = SUBJECTS.find((s) => s.value === subject);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    const name = sessionName.trim() || `${selectedSubject?.label ?? 'General'} — ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`;
-    
-    const mappedRules = selectedRuleIds
-      .map(id => rules.find(r => r.id === id))
-      .filter(Boolean)
-      .map(r => ({ id: r.id, instruction: r.description }));
+    try {
+      const name = sessionName.trim() || `${selectedSubject?.label ?? 'General'} — ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`;
+      
+      const mappedRules = selectedRuleIds
+        .map(id => rules.find(r => r.id === id))
+        .filter(Boolean)
+        .map(r => ({ id: r.id, instruction: r.description }));
 
-    onStartSession(
-      {
-        subject,
-        strictness: strictnessToKey(strictnessVal),
-        enableAiDetection,
-        customInstructions,
-        maxScore,
-        feedbackTone: 'neutral',
-        customRules: mappedRules,
-      },
-      name
-    );
+      await onStartSession(
+        {
+          subject,
+          strictness: strictnessToKey(strictnessVal),
+          enableAiDetection,
+          customInstructions,
+          maxScore,
+          feedbackTone: 'neutral',
+          customRules: mappedRules,
+        },
+        name
+      );
+    } catch (err: any) {
+      console.error('Error starting session:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (loadingData) {

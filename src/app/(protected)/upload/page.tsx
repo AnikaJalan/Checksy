@@ -70,14 +70,19 @@ export default function UploadPage() {
           files: manifest.manifest
         })
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
       
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(errText || 'Failed to start grading session');
+      }
+      
+      const data = await res.json();
       toast.success('Grading session dispatched to background workers!');
       setManifest((prev: any) => ({ ...prev, sessionId: data.sessionId }));
       setStep('process');
     } catch (err: any) {
       toast.error(err.message);
+      throw err;
     }
   }
 

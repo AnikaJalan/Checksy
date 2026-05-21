@@ -43,6 +43,10 @@ export default function NewGradingSessionPage() {
               files: uploadData.files
             })
           });
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(errText || 'Failed to start grading session');
+          }
           const { sessionId: sid } = await res.json();
           setSessionId(sid);
           setStep('POLLING');
