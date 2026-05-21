@@ -23,39 +23,41 @@ export async function updateStatistics(teacherId: string, payload: {
   const existing = await getStatistics(teacherId);
 
   // Assuming exactly 3 minutes (180 secs) objectively saved per assignment natively.
-  const timeSaved = payload.gradedCountIncrement * 180;
+  const timeSaved = payload.gradedCountIncrement * 3; // minutes
 
   if (!existing) {
     return db.insert(gradingStatistics).values({
       teacherId,
-      totalGraded: payload.gradedCountIncrement,
-      averageScore: payload.avgScore.toString(),
-      averageAiPercentage: payload.avgAiScore.toString(),
-      flaggedCount: payload.flaggedCountIncrement,
-      timeSavedSeconds: timeSaved,
+      totalSessions: 1,
+      totalAssignmentsGraded: payload.gradedCountIncrement,
+      allTimeAverageScore: payload.avgScore,
+      totalFlagged: payload.flaggedCountIncrement,
+      totalTimeSavedMinutes: timeSaved,
+      lastGradedAt: new Date().toISOString().split('T')[0],
+      updatedAt: new Date(),
     });
   }
 
   // Calculate new running mathematical averages securely protecting NaN bounds recursively.
-  const newTotalGraded = existing.totalGraded + payload.gradedCountIncrement;
+  const newTotalGraded = existing.totalAssignmentsGraded + payload.gradedCountIncrement;
   
   if (newTotalGraded === 0) return; // Prevent zero division mathematically
 
-  const oldWeight = existing.totalGraded / newTotalGraded;
+  const oldWeight = existing.totalAssignmentsGraded / newTotalGraded;
   const newWeight = payload.gradedCountIncrement / newTotalGraded;
 
-  const newAvgScore = ((parseFloat(existing.averageScore) || 0) * oldWeight) + (payload.avgScore * newWeight);
-  const newAvgAiScore = ((parseFloat(existing.averageAiPercentage) || 0) * oldWeight) + (payload.avgAiScore * newWeight);
+  const newAvgScore = ((existing.allTimeAverageScore || 0) * oldWeight) + (payload.avgScore * newWeight);
 
-  const newFlaggedCount = existing.flaggedCount + payload.flaggedCountIncrement;
+  const newFlaggedCount = existing.totalFlagged + payload.flaggedCountIncrement;
   const addedTimeSaved = timeSaved; 
 
   return db.update(gradingStatistics).set({
-    totalGraded: newTotalGraded,
-    averageScore: newAvgScore.toFixed(2),
-    averageAiPercentage: newAvgAiScore.toFixed(2),
-    flaggedCount: newFlaggedCount,
-    timeSavedSeconds: existing.timeSavedSeconds + addedTimeSaved,
+    totalSessions: existing.totalSessions + 1,
+    totalAssignmentsGraded: newTotalGraded,
+    allTimeAverageScore: newAvgScore,
+    totalFlagged: newFlaggedCount,
+    totalTimeSavedMinutes: existing.totalTimeSavedMinutes + addedTimeSaved,
+    lastGradedAt: new Date().toISOString().split('T')[0],
     updatedAt: new Date(),
   }).where(eq(gradingStatistics.teacherId, teacherId));
 }

@@ -12,7 +12,6 @@ const serveHost = isDev
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  signingKey: isDev ? undefined : process.env.INNGEST_SIGNING_KEY,
   ...(serveHost && { serveHost }),
   functions: [
     gradeSubmissionsEvent,

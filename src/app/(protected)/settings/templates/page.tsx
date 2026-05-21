@@ -227,7 +227,7 @@ export default function TemplatesPage() {
               {/* Subject */}
               <div className="space-y-2">
                 <Label className="text-xs uppercase tracking-widest text-slate-400 font-semibold">Default Subject</Label>
-                <Select value={subject} onValueChange={setSubject}>
+                <Select value={subject} onValueChange={(v) => v && setSubject(v)}>
                   <SelectTrigger className="rounded-xl border-slate-200">
                     <SelectValue />
                   </SelectTrigger>
@@ -242,7 +242,7 @@ export default function TemplatesPage() {
               {/* Strictness */}
               <div className="space-y-2">
                 <Label className="text-xs uppercase tracking-widest text-slate-400 font-semibold">Strictness</Label>
-                <Select value={strictness} onValueChange={setStrictness}>
+                <Select value={strictness} onValueChange={(v) => v && setStrictness(v)}>
                   <SelectTrigger className="rounded-xl border-slate-200">
                     <SelectValue />
                   </SelectTrigger>

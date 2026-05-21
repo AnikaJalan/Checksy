@@ -11,7 +11,6 @@ import { eq, count, avg, sql } from 'drizzle-orm';
 import { decryptKey } from '@/lib/crypto';
 import { NonRetriableError } from 'inngest';
 
-// @ts-expect-error Types mismatch due to Inngest SDK generic type requirements
 export const gradeSubmissionsEvent = inngest.createFunction(
   { 
     id: 'grade-submissions-orchestrator', 

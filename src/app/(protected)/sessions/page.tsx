@@ -179,16 +179,12 @@ export default async function SessionsPage() {
                           <RetrySessionButton sessionId={session.id} />
                         )}
                         <DeleteSessionButton sessionId={session.id} />
-                        <Button
-                          asChild
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-3 text-[#5c739b] hover:text-[#162850] hover:bg-[#eaf1fc] rounded-lg text-xs font-medium"
+                        <Link
+                          href={`/grade/${session.id}`}
+                          className="inline-flex items-center h-8 px-3 text-[#5c739b] hover:text-[#162850] hover:bg-[#eaf1fc] rounded-lg text-xs font-medium transition-colors"
                         >
-                          <Link href={`/grade/${session.id}`}>
-                            View <ArrowRight className="w-3 h-3 ml-1" />
-                          </Link>
-                        </Button>
+                          View <ArrowRight className="w-3 h-3 ml-1" />
+                        </Link>
                       </div>
                     </td>
                   </tr>

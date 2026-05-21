@@ -38,14 +38,16 @@ export function DeleteSessionButton({ sessionId }: { sessionId: string }) {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <button
-          type="button"
-          className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger
+        render={
+          <button
+            type="button"
+            className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        }
+      />
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Session?</AlertDialogTitle>

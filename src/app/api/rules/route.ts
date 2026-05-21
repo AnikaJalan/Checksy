@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     return NextResponse.json(rule)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return new NextResponse(error.errors[0].message, { status: 400 })
+      return new NextResponse(error.issues[0]?.message || 'Validation error', { status: 400 })
     }
     return new NextResponse('Internal Error', { status: 500 })
   }

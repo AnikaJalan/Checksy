@@ -21,6 +21,7 @@ export default function UploadPage() {
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
     const file = acceptedFiles[0];
+    if (!file) return;
     
     setIsUploading(true);
     setError(null);

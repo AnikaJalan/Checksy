@@ -34,6 +34,9 @@ export async function POST(req: Request) {
 
     // 1. Create durable DB session securely owned by this teacher
     const session = await createSession(teacher.id, name || 'Untitled Grading Session', config, validFiles);
+    if (!session) {
+      return new NextResponse('Failed to create grading session.', { status: 500 });
+    }
     await updateSessionStatus(session.id, 'pending', validFiles.length);
 
     // 2. Dispatch the background AI grading pipeline to Inngest natively

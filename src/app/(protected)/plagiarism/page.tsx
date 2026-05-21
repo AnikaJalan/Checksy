@@ -101,15 +101,17 @@ export default function PlagiarismPage() {
 
     const updated = [...files]
     for (let i = 0; i < updated.length; i++) {
-      if (updated[i].status === 'done') continue
-      updated[i] = { ...updated[i], status: 'analyzing' }
+      const item = updated[i]
+      if (!item) continue
+      if (item.status === 'done') continue
+      updated[i] = { ...item, status: 'analyzing' }
       setFiles([...updated])
 
       try {
         const res = await fetch('/api/plagiarism', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text: updated[i].text, strictness }),
+          body: JSON.stringify({ text: item.text, strictness }),
         })
 
         if (!res.ok) {
@@ -118,10 +120,10 @@ export default function PlagiarismPage() {
         }
 
         const result: AnalysisResult = await res.json()
-        updated[i] = { ...updated[i], result, status: 'done' }
+        updated[i] = { ...item, result, status: 'done' }
       } catch (err: any) {
-        updated[i] = { ...updated[i], status: 'error' }
-        toast.error(`Failed: ${updated[i].name} — ${err.message}`)
+        updated[i] = { ...item, status: 'error' }
+        toast.error(`Failed: ${item.name} — ${err.message}`)
       }
       setFiles([...updated])
     }
@@ -153,7 +155,7 @@ export default function PlagiarismPage() {
         </div>
 
         <div className="flex items-center gap-4 bg-white/90 p-2 rounded-2xl border border-[#d4dfef] shadow-sm">
-          <Select value={strictness} onValueChange={setStrictness}>
+          <Select value={strictness} onValueChange={(v) => v && setStrictness(v)}>
             <SelectTrigger className="w-[140px] border-none shadow-none focus:ring-0 text-[#304a76] font-medium bg-transparent">
               <SelectValue placeholder="Strictness" />
             </SelectTrigger>

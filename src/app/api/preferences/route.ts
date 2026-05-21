@@ -56,7 +56,7 @@ export async function PUT(req: Request) {
     return NextResponse.json(updated)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return new NextResponse((error as z.ZodError<any>).errors[0].message, { status: 400 });
+      return new NextResponse(error.issues[0]?.message || 'Validation error', { status: 400 });
     }
     return new NextResponse('Internal Error', { status: 500 })
   }

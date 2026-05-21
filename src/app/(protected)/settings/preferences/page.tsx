@@ -234,7 +234,7 @@ export default function PreferencesPage() {
           description="Sets the subject context that shapes the AI's grading rubric."
         >
           <div className="space-y-4">
-            <Select value={prefs.defaultSubject} onValueChange={(v) => set('defaultSubject', v)}>
+            <Select value={prefs.defaultSubject} onValueChange={(v) => v && set('defaultSubject', v)}>
               <SelectTrigger className="rounded-xl border-slate-200">
                 <SelectValue />
               </SelectTrigger>
@@ -261,7 +261,7 @@ export default function PreferencesPage() {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-widest text-slate-400 font-semibold">Level</Label>
-              <Select value={prefs.defaultStrictness} onValueChange={(v) => set('defaultStrictness', v)}>
+              <Select value={prefs.defaultStrictness} onValueChange={(v) => v && set('defaultStrictness', v)}>
                 <SelectTrigger className="rounded-xl border-slate-200">
                   <SelectValue />
                 </SelectTrigger>
@@ -355,7 +355,7 @@ export default function PreferencesPage() {
                   <Label className="text-xs uppercase tracking-widest text-slate-400 font-semibold">Sensitivity</Label>
                   <Select
                     value={prefs.aiSensitivity ?? 'medium'}
-                    onValueChange={(v) => set('aiSensitivity', v)}
+                    onValueChange={(v) => v && set('aiSensitivity', v)}
                   >
                     <SelectTrigger className="rounded-xl border-slate-200">
                       <SelectValue />
