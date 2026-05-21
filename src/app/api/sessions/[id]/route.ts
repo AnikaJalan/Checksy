@@ -6,7 +6,7 @@ import { eq, and } from 'drizzle-orm'
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const teacher = await getTeacher()

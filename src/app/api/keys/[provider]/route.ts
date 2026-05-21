@@ -4,13 +4,13 @@ import { deleteApiKey } from '@/lib/services/api-keys.service'
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { provider: string } }
+  { params }: { params: Promise<{ provider: string }> }
 ) {
   try {
     const teacher = await getTeacher()
     if (!teacher) return new NextResponse('Unauthorized', { status: 401 })
 
-    const { provider } = params
+    const { provider } = await params
     await deleteApiKey(teacher.id, provider)
 
     return NextResponse.json({ success: true })

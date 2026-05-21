@@ -13,7 +13,7 @@ type ManifestFile = {
 
 export async function POST(
   req: Request,
-  { params }: { params: { sessionId: string } }
+  { params }: { params: Promise<{ sessionId: string }> }
 ) {
   try {
     const teacher = await getTeacher()

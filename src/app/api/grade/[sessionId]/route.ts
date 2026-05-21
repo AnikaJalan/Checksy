@@ -3,7 +3,7 @@ import { getTeacher } from '@/lib/auth/get-teacher';
 import { getSession, updateSessionStatus } from '@/lib/services/grading-sessions.service';
 import { getResultsBySession } from '@/lib/services/student-results.service';
 
-export async function GET(req: Request, { params }: { params: { sessionId: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ sessionId: string }> }) {
   const teacher = await getTeacher();
   if (!teacher) return new NextResponse('Unauthorized', { status: 401 });
   

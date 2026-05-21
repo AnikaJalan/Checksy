@@ -13,7 +13,7 @@ const updateRuleSchema = z.object({
   priority: z.number().optional(),
 })
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const teacher = await getTeacher()
   if (!teacher) return new NextResponse('Unauthorized', { status: 401 })
   const { id } = await params
@@ -39,7 +39,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const teacher = await getTeacher()
   if (!teacher) return new NextResponse('Unauthorized', { status: 401 })
   const { id } = await params
