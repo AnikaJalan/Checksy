@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const isBuild = process.env.NEXT_PHASE === 'phase-production-build' || process.env.CI === 'true' || process.env.VERCEL === '1';
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build';
 
 const envSchema = z.object({
   DATABASE_URL: z.string().url().default(isBuild ? 'postgres://dummy:dummy@localhost:5432/dummy' : (undefined as any)),
