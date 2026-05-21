@@ -14,7 +14,7 @@ import { NonRetriableError } from 'inngest';
 export const gradeSubmissionsEvent = inngest.createFunction(
   { 
     id: 'grade-submissions-orchestrator', 
-    concurrency: 10,
+    concurrency: 5,
     retries: 1,
     triggers: [{ event: 'grading/session.start' }]
   },
