@@ -113,6 +113,14 @@ npx inngest-cli@latest dev
 4. Go to **Upload**, drag and drop a ZIP file of text/markdown submissions, and configure your assignment.
 5. Click **Start Grading** and review the results in the Dashboard!
 
+
+## Demo Video
+
+Watch the complete walkthrough and implementation of Checksy below:
+
+
+https://github.com/user-attachments/assets/13920fa5-b3a0-4be3-91c5-a925b97eb953
+
 ## Author
 
 Developed by Anika Jalan
