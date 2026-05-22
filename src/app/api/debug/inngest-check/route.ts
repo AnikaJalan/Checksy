@@ -4,12 +4,14 @@ import { inngest } from '@/lib/inngest/client';
 export async function GET() {
   try {
     // Gather diagnostic info about the Inngest client configuration
+    // Cast to any to access internal SDK state for diagnostics
+    const client = inngest as any;
     const diagnostics: Record<string, unknown> = {
-      mode: inngest.mode,
-      eventKeySet: inngest.eventKeySet(),
-      eventKeyPrefix: inngest.eventKey ? inngest.eventKey.substring(0, 6) + '...' : 'NOT SET',
-      eventBaseUrl: inngest.eventBaseUrl,
-      apiBaseUrl: inngest.apiBaseUrl,
+      mode: client.mode,
+      eventKeySet: !!client.eventKey,
+      eventKeyPrefix: client.eventKey ? String(client.eventKey).substring(0, 6) + '...' : 'NOT SET',
+      eventBaseUrl: client.eventBaseUrl,
+      apiBaseUrl: client.apiBaseUrl,
       env_INNGEST_DEV: process.env.INNGEST_DEV ?? 'NOT SET',
       env_INNGEST_EVENT_KEY: process.env.INNGEST_EVENT_KEY ? process.env.INNGEST_EVENT_KEY.substring(0, 6) + '...' : 'NOT SET',
       env_INNGEST_SIGNING_KEY: process.env.INNGEST_SIGNING_KEY ? process.env.INNGEST_SIGNING_KEY.substring(0, 8) + '...' : 'NOT SET',
