@@ -2,6 +2,8 @@
 
 Checksy is a smart, AI-powered platform designed to simplify and automate the assignment grading workflow for teachers. Built with a modern tech stack, Checksy processes batches of student submissions, applies customizable grading rubrics, checks for AI-generated content, and delivers actionable, consistent feedback in minutes.
 
+Demo Link: https://checksy.vercel.app/
+
 ## Overview
 
 Checksy solves the time-consuming challenge of manual grading. Teachers can upload a ZIP archive of student submissions, select a subject, set grading strictness, apply custom instructions, and let AI do the heavy lifting. The platform uses advanced background processing to grade files concurrently and securely, providing a comprehensive dashboard to review scores, read feedback, and download CSV reports.
@@ -128,8 +130,3 @@ Developed by Anika Jalan
 * GitHub: [https://github.com/AnikaJalan](https://github.com/AnikaJalan)
 * LinkedIn: [https://www.linkedin.com/in/anika-jalan/](https://www.linkedin.com/in/anika-jalan/)
 
-## Repository
-
-Check out the project here:
-
-[https://github.com/AnikaJalan/Checksy](https://github.com/AnikaJalan/Checksy)
